@@ -1,0 +1,121 @@
+﻿@import "tailwindcss";
+
+@theme {
+  /* 1. IVORY (Default) */
+  --color-home-bg: #fdfcf7;
+  --color-home-text: #2d2410;      
+  --color-home-subtext: #7c725a;
+  --color-home-glow: #f4edd8;
+  --color-gold-primary: #947a25;   
+}
+
+/* 2. CHAMPAGNE */
+[data-theme-color='champagne'] {
+  --color-home-bg: #f9f5eb;
+  --color-home-text: #4a3b1d;
+  --color-home-subtext: #8b7d5e;
+  --color-home-glow: #fff9e6;
+  --color-gold-primary: #a68b32;
+}
+
+/* 3. PEARL */
+[data-theme-color='pearl'] {
+  --color-home-bg: #f4f4f4;
+  --color-home-text: #1a1a1a;
+  --color-home-subtext: #666666;
+  --color-home-glow: #ffffff;
+  --color-gold-primary: #7a6a4d;
+}
+
+/* 4. SAFFRON */
+[data-theme-color='saffron'] {
+  --color-home-bg: #fffcf2;
+  --color-home-text: #3d2b08;
+  --color-home-subtext: #7d6b46;
+  --color-home-glow: #ffedba;
+  --color-gold-primary: #bf8f00;
+}
+
+/* 5. LINEN */
+[data-theme-color='linen'] {
+  --color-home-bg: #ede9e1;
+  --color-home-text: #2c2a26;
+  --color-home-subtext: #6b665e;
+  --color-home-glow: #f7f4ef;
+  --color-gold-primary: #8c764d;
+}
+
+/* 6. ROYAL (White, Gold, Red) */
+[data-theme-color='royal'] {
+  --color-home-bg: #ffffff;
+  --color-home-text: #450a0a;
+  --color-home-subtext: #991b1b;
+  --color-home-glow: #fee2e2;
+  --color-gold-primary: #d4af37;
+}
+
+/* 7. PURE GOLD */
+[data-theme-color='pure-gold'] {
+  --color-home-bg: #e2d484b0; 
+  --color-home-text: #261f0d;
+  --color-home-subtext: #5c4d26;
+  --color-home-glow: #fffbe6;
+  --color-gold-primary: #ffffff;
+}
+
+/* BORDERS & BLENDING */
+[data-theme-color] {
+  --border-subtle: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme-color='saffron'], 
+[data-theme-color='default'],
+[data-theme-color='pure-gold'] {
+  --border-subtle: rgba(148, 122, 37, 0.1);
+}
+
+/* METALLIC SHIMMER ANIMATION */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg, 
+    var(--color-gold-primary) 0%, 
+    #fff7d6 25%, 
+    var(--color-gold-primary) 50%, 
+    #fff7d6 75%, 
+    var(--color-gold-primary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+/* UTILITIES */
+@utility vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+@utility moroccan-border {
+  border: 1px solid var(--color-gold-primary);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.blend-morocco {
+  mix-blend-mode: multiply;
+  mask-image: linear-gradient(to right, black 20%, transparent 100%);
+}
