@@ -1,5 +1,6 @@
 ﻿import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { PiGear, PiCaretRight } from "react-icons/pi"; // Ensure you have react-icons installed
 
 // --- CONSTANTS ---
 const COLORS = [
@@ -34,6 +35,9 @@ const itemVars = {
 export default function HomeContent() {
   const [layout, setLayout] = useState("rabat");
   const [color, setColor] = useState("default");
+  
+  // New state to toggle control panel visibility
+  const [showControls, setShowControls] = useState(true);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme-color", color);
@@ -56,54 +60,67 @@ export default function HomeContent() {
         />
       </div>
 
-      {/* --- DRAGGABLE CONTROL PANEL --- */}
+      {/* --- COLLAPSIBLE CONTROL SIDEBAR --- */}
       <motion.div 
-        drag
-        dragMomentum={false}
-        dragConstraints={{ left: -1200, right: 0, top: 0, bottom: 600 }}
-        whileDrag={{ scale: 1.02, cursor: "grabbing" }}
-        className="fixed top-24 right-8 z-50 flex flex-col gap-8 bg-white/10 backdrop-blur-3xl p-6 rounded-sm border border-gold-primary/20 shadow-2xl cursor-grab active:cursor-grabbing select-none"
+        // Fixed positioning on the right side
+        className="fixed top-24 right-0 z-50 flex items-start"
+        animate={{ x: showControls ? 0 : "calc(100% - 40px)" }} // Slide logic
+        initial={false}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {/* Visual Drag Handle */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-30">
-          <div className="w-1 h-1 rounded-full bg-gold-primary" />
-          <div className="w-1 h-1 rounded-full bg-gold-primary" />
-          <div className="w-1 h-1 rounded-full bg-gold-primary" />
-        </div>
+        
+        {/* 1. TOGGLE BUTTON (Visible when closed) */}
+        <button
+          onClick={() => setShowControls(!showControls)}
+          className="bg-home-bg/80 backdrop-blur-md border border-gold-primary/20 border-r-0 p-3 rounded-l-md shadow-lg text-gold-primary hover:bg-home-text/5 transition-colors"
+          title={showControls ? "Hide Controls" : "Show Theme Controls"}
+        >
+          {showControls ? <PiCaretRight size={20} /> : <PiGear size={20} className="animate-spin-slow" />}
+        </button>
 
-        <div>
-          <p className="text-[8px] uppercase tracking-[0.4em] font-bold mb-4 opacity-40">Architectural Vision</p>
-          <div className="flex flex-col gap-1.5">
-            {LAYOUTS.map((l) => (
-              <button
-                key={l.id}
-                onPointerDown={(e) => e.stopPropagation()} 
-                onClick={() => setLayout(l.id)}
-                className={`text-left px-4 py-2 text-[9px] uppercase tracking-[0.2em] transition-all cursor-pointer ${
-                  layout === l.id ? "bg-home-text text-home-bg font-bold" : "hover:bg-gold-primary/5 opacity-60"
-                }`}
-              >
-                {l.label}
-              </button>
-            ))}
+        {/* 2. THE PANEL CONTENT */}
+        <div className="bg-home-bg/90 backdrop-blur-3xl p-6 border-l border-b border-gold-primary/20 shadow-2xl w-64 min-h-[400px] flex flex-col gap-8">
+          
+          <div>
+            <p className="text-[8px] uppercase tracking-[0.4em] font-bold mb-4 opacity-40">Architectural Vision</p>
+            <div className="flex flex-col gap-1.5">
+              {LAYOUTS.map((l) => (
+                <button
+                  key={l.id}
+                  onClick={() => setLayout(l.id)}
+                  className={`text-left px-4 py-2 text-[9px] uppercase tracking-[0.2em] transition-all cursor-pointer rounded-sm ${
+                    layout === l.id 
+                      ? "bg-gold-primary text-home-bg font-bold shadow-sm" 
+                      : "hover:bg-gold-primary/10 opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <p className="text-[8px] uppercase tracking-[0.4em] font-bold mb-4 opacity-40">Chromatic Atmosphere</p>
-          <div className="flex gap-3 px-1">
-            {COLORS.map((c) => (
-              <button
-                key={c.id}
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => setColor(c.id)}
-                className={`w-4 h-4 rounded-full transition-all cursor-pointer ${
-                  color === c.id ? "ring-2 ring-gold-primary ring-offset-4 ring-offset-home-bg scale-110" : "opacity-50"
-                }`}
-                style={{ backgroundColor: c.bg, border: '1px solid rgba(0,0,0,0.1)' }}
-              />
-            ))}
+          <div>
+            <p className="text-[8px] uppercase tracking-[0.4em] font-bold mb-4 opacity-40">Chromatic Atmosphere</p>
+            <div className="flex flex-wrap gap-3 px-1">
+              {COLORS.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setColor(c.id)}
+                  className={`w-6 h-6 rounded-full transition-all cursor-pointer relative group ${
+                    color === c.id ? "ring-2 ring-gold-primary ring-offset-2 ring-offset-home-bg scale-110" : "opacity-70 hover:opacity-100 hover:scale-110"
+                  }`}
+                  style={{ backgroundColor: c.bg, border: '1px solid rgba(0,0,0,0.1)' }}
+                  title={c.label}
+                />
+              ))}
+            </div>
           </div>
+
+          <div className="mt-auto pt-6 border-t border-gold-primary/10">
+             <p className="text-[8px] text-center text-home-subtext opacity-50">CLIENT PREVIEW MODE</p>
+          </div>
+
         </div>
       </motion.div>
 
