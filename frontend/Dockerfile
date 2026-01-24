@@ -3,26 +3,33 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copy package files first for caching dependencies
+# Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source code
+# Copy source and build
 COPY . .
-
-# Build Vite app (output will go to /app/dist)
 RUN npm run build
 
 # ================= PRODUCTION STAGE =================
-FROM nginx:alpine
+FROM node:20-alpine
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-# Copy build output
-COPY --from=build /app/build/client /usr/share/nginx/html
-# Copy custom Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=80
 
+# Copy package files to install ONLY production dependencies (smaller image)
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# Copy the build output from the build stage
+# React Router v7 puts client/server builds inside /build
+COPY --from=build /app/build ./build
+
+# Expose the port we set in ENV
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Start the server
+CMD ["npm", "run", "start"]
