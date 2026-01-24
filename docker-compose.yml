@@ -1,7 +1,7 @@
 ﻿version: "3.9"
 
 services:
-  dcs:
+  web:
     build:
       context: ./frontend
       dockerfile: Dockerfile
