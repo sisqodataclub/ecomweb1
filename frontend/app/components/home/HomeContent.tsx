@@ -145,7 +145,10 @@ function renderLayoutContent(layout: string) {
   switch (layout) {
     case "rabat":
       return (
-        <motion.div variants={containerVars} className="container mx-auto px-6 grid grid-cols-12 gap-4 items-center justify-center max-w-7xl relative">
+        <motion.div 
+          variants={containerVars} 
+          className="container mx-auto px-6 pt-32 md:pt-0 grid grid-cols-12 gap-4 items-center justify-center max-w-7xl relative"
+        >
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 0.03, x: 0 }} transition={{ duration: 2 }} className="absolute top-0 left-0 text-[18vw] font-serif pointer-events-none select-none italic">
             Heritage
           </motion.div>
@@ -234,149 +237,150 @@ function renderLayoutContent(layout: string) {
     </motion.div>
   );
 
-      case "ritual":
-  return (
-    <motion.div 
-      variants={containerVars} 
-      className="container mx-auto px-6 grid grid-cols-12 gap-12 lg:gap-24 items-center max-w-7xl relative"
-    >
-      {/* 1. LEFT SIDE: THE ARTISANAL LENS */}
-      <motion.div variants={itemVars} className="col-span-12 lg:col-span-6 relative flex justify-center items-center min-h-[500px]">
-        
-        {/* --- PULSING GOLD AURA --- */}
-        {[1, 2, 3].map((index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: [0, 0.15, 0], 
-              scale: [0.8, 1.8],
-            }}
-            transition={{ 
-              duration: 6, 
-              repeat: Infinity, 
-              delay: index * 2,
-              ease: "easeOut" 
-            }}
-            className="absolute w-full max-w-md aspect-square rounded-full border border-gold-primary pointer-events-none z-0"
-          />
-        ))}
-
-        {/* --- ETHEREAL SMOKE EFFECT --- */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex justify-center items-center">
-          <motion.div
-            animate={{ 
-              y: [-20, -140],
-              opacity: [0, 0.4, 0],
-              scale: [1, 2],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="w-[200px] h-[300px] bg-gold-primary/10 blur-[60px] rounded-full"
-            style={{ filter: "url(#smoke-filter)" }}
-          />
-        </div>
-
-        {/* Hidden SVG Filter for Smoke Texture */}
-        <svg className="hidden">
-          <filter id="smoke-filter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="5" seed="1">
-              <animate attributeName="baseFrequency" dur="30s" values="0.01;0.02;0.01" repeatCount="indefinite" />
-            </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" scale="60" />
-          </filter>
-        </svg>
-
-        {/* Rotating Sacred Geometry Ring */}
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[115%] aspect-square border border-dashed border-gold-primary/20 rounded-full pointer-events-none z-10"
-        />
-
-        {/* ROUND IMAGE CONTAINER */}
-        <div className="relative group w-full max-w-md aspect-square z-20">
+  case "ritual":
+    return (
+      <motion.div 
+        variants={containerVars} 
+        // UPDATED: Added pt-32 for mobile to clear navbar, md:pt-0 for desktop
+        className="container mx-auto px-6 pt-32 md:pt-0 grid grid-cols-12 gap-12 lg:gap-24 items-center max-w-7xl relative"
+      >
+        {/* 1. LEFT SIDE: THE ARTISANAL LENS */}
+        <motion.div variants={itemVars} className="col-span-12 lg:col-span-6 relative flex justify-center items-center min-h-[500px]">
           
-          {/* Floating "Aged" Badge */}
-          <motion.div 
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-4 -right-4 z-40 bg-gold-primary text-home-bg w-24 h-24 rounded-full shadow-2xl flex flex-col items-center justify-center border-4 border-home-bg"
-          >
-            <span className="text-[8px] font-black uppercase tracking-tighter">Vintaged</span>
-            <span className="text-2xl font-serif italic leading-none">10yr</span>
-          </motion.div>
+          {/* --- PULSING GOLD AURA --- */}
+          {[1, 2, 3].map((index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ 
+                opacity: [0, 0.15, 0], 
+                scale: [0.8, 1.8],
+              }}
+              transition={{ 
+                duration: 6, 
+                repeat: Infinity, 
+                delay: index * 2,
+                ease: "easeOut" 
+              }}
+              className="absolute w-full max-w-md aspect-square rounded-full border border-gold-primary pointer-events-none z-0"
+            />
+          ))}
 
-          {/* THE CIRCLE VESSEL */}
-          <div className="relative w-full h-full rounded-full overflow-hidden border border-gold-primary/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] bg-neutral-900">
-             <motion.img 
-                initial={{ scale: 1.3 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 4, ease: "easeOut" }}
-                src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800" 
-                className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[4000ms] filter contrast-125 brightness-75 group-hover:brightness-100" 
-                alt="The Oud Ritual" 
-             />
-             
-             {/* Inner Depth Effects */}
-             <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] pointer-events-none" />
-             <div className="absolute inset-0 bg-gradient-to-tr from-gold-primary/30 via-transparent to-transparent opacity-40" />
-          </div>
-
-          {/* Extraction Data Label */}
-          <div className="absolute -bottom-16 left-0 right-0 text-center">
-            <p className="text-[9px] uppercase tracking-[0.7em] text-gold-primary font-black">
-              Batch № 882 // Private Collection
-            </p>
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 1, duration: 1.5 }}
-              className="h-[1px] bg-gradient-to-r from-transparent via-gold-primary/50 to-transparent w-full mt-4" 
+          {/* --- ETHEREAL SMOKE EFFECT --- */}
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex justify-center items-center">
+            <motion.div
+              animate={{ 
+                y: [-20, -140],
+                opacity: [0, 0.4, 0],
+                scale: [1, 2],
+              }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              className="w-[200px] h-[300px] bg-gold-primary/10 blur-[60px] rounded-full"
+              style={{ filter: "url(#smoke-filter)" }}
             />
           </div>
-        </div>
-      </motion.div>
 
-      {/* 2. RIGHT SIDE: THE SENSORY NARRATIVE */}
-      <motion.div variants={itemVars} className="col-span-12 lg:col-span-6 space-y-10 text-center lg:text-left z-20">
-        <div className="space-y-4">
-          <h3 className="text-gold-primary tracking-[1em] uppercase text-[10px] font-black opacity-70">
-            Heritage & Alchemy
-          </h3>
-          <h1 className="text-7xl lg:text-8xl font-serif text-home-text leading-[0.9]">
-            A Decade <br/> 
-            <span className="text-shimmer italic font-light">of Silence</span>
-          </h1>
-        </div>
+          {/* Hidden SVG Filter for Smoke Texture */}
+          <svg className="hidden">
+            <filter id="smoke-filter">
+              <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="5" seed="1">
+                <animate attributeName="baseFrequency" dur="30s" values="0.01;0.02;0.01" repeatCount="indefinite" />
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" scale="60" />
+            </filter>
+          </svg>
 
-        <div className="space-y-8 max-w-lg mx-auto lg:mx-0">
-          <p className="text-home-subtext font-light leading-relaxed text-xl lg:text-2xl italic border-l-2 border-gold-primary/30 pl-8">
-            "Every drop carries ten winters of Atlas mountain air and the spirit of ancient resin."
-          </p>
-          
-          <div className="grid grid-cols-2 gap-y-10 pt-8 border-t border-gold-primary/10">
-            <div>
-              <p className="text-[8px] uppercase tracking-[0.3em] font-black opacity-40 mb-2">Base</p>
-              <p className="text-xs uppercase tracking-widest text-gold-primary font-bold">Wild Cambodian Oud</p>
+          {/* Rotating Sacred Geometry Ring */}
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+            className="absolute w-[115%] aspect-square border border-dashed border-gold-primary/20 rounded-full pointer-events-none z-10"
+          />
+
+          {/* ROUND IMAGE CONTAINER */}
+          <div className="relative group w-full max-w-md aspect-square z-20">
+            
+            {/* Floating "Aged" Badge */}
+            <motion.div 
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-4 -right-4 z-40 bg-gold-primary text-home-bg w-24 h-24 rounded-full shadow-2xl flex flex-col items-center justify-center border-4 border-home-bg"
+            >
+              <span className="text-[8px] font-black uppercase tracking-tighter">Vintaged</span>
+              <span className="text-2xl font-serif italic leading-none">10yr</span>
+            </motion.div>
+
+            {/* THE CIRCLE VESSEL */}
+            <div className="relative w-full h-full rounded-full overflow-hidden border border-gold-primary/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] bg-neutral-900">
+               <motion.img 
+                  initial={{ scale: 1.3 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 4, ease: "easeOut" }}
+                  src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800" 
+                  className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[4000ms] filter contrast-125 brightness-75 group-hover:brightness-100" 
+                  alt="The Oud Ritual" 
+               />
+               
+               {/* Inner Depth Effects */}
+               <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] pointer-events-none" />
+               <div className="absolute inset-0 bg-gradient-to-tr from-gold-primary/30 via-transparent to-transparent opacity-40" />
             </div>
-            <div>
-              <p className="text-[8px] uppercase tracking-[0.3em] font-black opacity-40 mb-2">Longevity</p>
-              <p className="text-xs uppercase tracking-widest text-gold-primary font-bold">Infinite (24h+)</p>
+
+            {/* Extraction Data Label */}
+            <div className="absolute -bottom-16 left-0 right-0 text-center">
+              <p className="text-[9px] uppercase tracking-[0.7em] text-gold-primary font-black">
+                Batch № 882 // Private Collection
+              </p>
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 1, duration: 1.5 }}
+                className="h-[1px] bg-gradient-to-r from-transparent via-gold-primary/50 to-transparent w-full mt-4" 
+              />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="pt-8">
-          <button className="group relative px-14 py-6 bg-transparent border border-gold-primary/30 overflow-hidden cursor-pointer">
-            <span className="relative z-10 text-gold-primary text-[10px] uppercase tracking-[0.8em] font-black group-hover:text-home-bg transition-colors duration-500">
-              Acquire Ritual
-            </span>
-            <div className="absolute inset-0 bg-gold-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-          </button>
-        </div>
+        {/* 2. RIGHT SIDE: THE SENSORY NARRATIVE */}
+        <motion.div variants={itemVars} className="col-span-12 lg:col-span-6 space-y-10 text-center lg:text-left z-20">
+          <div className="space-y-4">
+            <h3 className="text-gold-primary tracking-[1em] uppercase text-[10px] font-black opacity-70">
+              Heritage & Alchemy
+            </h3>
+            <h1 className="text-7xl lg:text-8xl font-serif text-home-text leading-[0.9]">
+              A Decade <br/> 
+              <span className="text-shimmer italic font-light">of Silence</span>
+            </h1>
+          </div>
+
+          <div className="space-y-8 max-w-lg mx-auto lg:mx-0">
+            <p className="text-home-subtext font-light leading-relaxed text-xl lg:text-2xl italic border-l-2 border-gold-primary/30 pl-8">
+              "Every drop carries ten winters of Atlas mountain air and the spirit of ancient resin."
+            </p>
+            
+            <div className="grid grid-cols-2 gap-y-10 pt-8 border-t border-gold-primary/10">
+              <div>
+                <p className="text-[8px] uppercase tracking-[0.3em] font-black opacity-40 mb-2">Base</p>
+                <p className="text-xs uppercase tracking-widest text-gold-primary font-bold">Wild Cambodian Oud</p>
+              </div>
+              <div>
+                <p className="text-[8px] uppercase tracking-[0.3em] font-black opacity-40 mb-2">Longevity</p>
+                <p className="text-xs uppercase tracking-widest text-gold-primary font-bold">Infinite (24h+)</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-8">
+            <button className="group relative px-14 py-6 bg-transparent border border-gold-primary/30 overflow-hidden cursor-pointer">
+              <span className="relative z-10 text-gold-primary text-[10px] uppercase tracking-[0.8em] font-black group-hover:text-home-bg transition-colors duration-500">
+                Acquire Ritual
+              </span>
+              <div className="absolute inset-0 bg-gold-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+            </button>
+          </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
-  );
+    );
 
     case "kasbah":
       return (

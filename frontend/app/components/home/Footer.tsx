@@ -28,7 +28,6 @@ export default function Footer() {
             <ul className="flex flex-col gap-4 text-gray-500 text-sm font-light">
               <FooterLink label="The Collection" />
               <FooterLink label="Fragrance Finder" />
-              <FooterLink label="Store Locator" />
               <FooterLink label="Our Heritage" />
             </ul>
           </div>

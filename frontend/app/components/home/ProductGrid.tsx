@@ -13,7 +13,7 @@ const PERFUMES = [
     name: "Midnight Rose",
     notes: "Damask Rose, Amber, Oud",
     price: "$195",
-    image: "https://images.unsplash.com/photo-1547881338-64674c07698b?auto=format&fit=crop&q=80&w=600",
+    image: "/a1.png", // Updated to use your local image
   },
   {
     id: 3,

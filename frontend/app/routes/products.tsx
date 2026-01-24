@@ -1,10 +1,12 @@
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo, useTransition, useEffect } from "react"; 
+import { useSearchParams } from "react-router"; 
+import { Link } from "react-router"; // Ensure this is imported
 import { motion, AnimatePresence } from "framer-motion";
 import { PiSlidersHorizontal, PiX, PiCheck, PiCaretDown, PiMinus, PiPlus } from "react-icons/pi";
 // !!! IMPORT YOUR NAVBAR HERE !!!
 import Navbar from "~/components/home/Navbar";
 
-// --- MOCK DATA (Updated with Hover Images) ---
+// --- MOCK DATA ---
 const PRODUCTS = [
   { 
     id: 1, name: "Oud Royale", category: "Unisex", gender: "unisex", price: 240, 
@@ -13,8 +15,8 @@ const PRODUCTS = [
   },
   { 
     id: 2, name: "Midnight Rose", category: "Floral", gender: "women", price: 195, 
-    image: "https://images.unsplash.com/photo-1547881338-64674c07698b?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&q=80&w=600" 
+    image: "/a1.png",
+    hoverImage: "/a1.png" 
   },
   { 
     id: 3, name: "Golden Saffron", category: "Spicy", gender: "men", price: 210, 
@@ -23,8 +25,8 @@ const PRODUCTS = [
   },
   { 
     id: 4, name: "Atlas Cedar", category: "Woody", gender: "men", price: 180, 
-    image: "https://images.unsplash.com/photo-1616949755610-8c9732802425?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1585120040315-2241b774ad0f?auto=format&fit=crop&q=80&w=600" 
+    image: "/a2.png",
+    hoverImage: "/a2.png" 
   },
   { 
     id: 5, name: "Desert Amber", category: "Oriental", gender: "women", price: 260, 
@@ -33,23 +35,23 @@ const PRODUCTS = [
   },
   { 
     id: 6, name: "Vetiver Noir", category: "Earthy", gender: "men", price: 220, 
-    image: "https://images.unsplash.com/photo-1590156221187-0ce0db2bf640?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&q=80&w=600" 
+    image: "/a3.png",
+    hoverImage: "/a3.png"
   },
   { 
-    id: 7, name: "Atlas Cedar", category: "Woody", gender: "men", price: 180, 
-    image: "https://images.unsplash.com/photo-1616949755610-8c9732802425?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1585120040315-2241b774ad0f?auto=format&fit=crop&q=80&w=600" 
+    id: 7, name: "Cedar", category: "Woody", gender: "men", price: 80, 
+    image: "/a3.png",
+    hoverImage: "/a3.png"
   },
   { 
-    id: 8, name: "Desert Amber", category: "Oriental", gender: "women", price: 260, 
-    image: "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1557827983-012eb6ea8dc1?auto=format&fit=crop&q=80&w=600" 
+    id: 8, name: "Amber", category: "Oriental", gender: "women", price: 60, 
+    image: "/a2.png",
+    hoverImage: "/a2.png" 
   },
   { 
-    id: 9, name: "Vetiver Noir", category: "Earthy", gender: "men", price: 220, 
-    image: "https://images.unsplash.com/photo-1590156221187-0ce0db2bf640?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&q=80&w=600" 
+    id: 9, name: "Vetiver", category: "Earthy", gender: "men", price: 220, 
+    image: "/a1.png",
+    hoverImage: "/a1.png"
   },
 ];
 
@@ -59,15 +61,23 @@ const FILTERS = {
 };
 
 export default function Products() {
-  const [activeGender, setActiveGender] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeGender, setActiveGender] = useState(searchParams.get("gender") || "All");
   const [activePrice, setActivePrice] = useState("All");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  
-  // --- PERFORMANCE STATE ---
-  const [isPending, startTransition] = useTransition(); // Smooth state updates
-  const [visibleCount, setVisibleCount] = useState(6);  // Pagination limit
 
-  // --- FILTER LOGIC ---
+  useEffect(() => {
+    const genderFromUrl = searchParams.get("gender");
+    if (genderFromUrl) {
+      setActiveGender(genderFromUrl);
+    } else {
+      setActiveGender("All");
+    }
+  }, [searchParams]);
+  
+  const [isPending, startTransition] = useTransition();
+  const [visibleCount, setVisibleCount] = useState(6); 
+
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) => {
       const genderMatch = activeGender === "All" || product.gender.toLowerCase() === activeGender.toLowerCase();
@@ -81,11 +91,16 @@ export default function Products() {
     });
   }, [activeGender, activePrice]);
 
-  // --- HANDLERS ---
   const handleGenderChange = (g) => {
     startTransition(() => {
       setActiveGender(g);
-      setVisibleCount(6); // Reset pagination on filter change
+      setVisibleCount(6);
+      if (g === "All") {
+        searchParams.delete("gender");
+      } else {
+        searchParams.set("gender", g);
+      }
+      setSearchParams(searchParams);
     });
   };
 
@@ -106,11 +121,10 @@ export default function Products() {
       <Navbar />
 
       {/* 2. MAIN CONTENT WRAPPER */}
-      {/* Changed pt-24 to pt-[140px] to ensure Navbar doesn't cover Header */}
-      <div className="pt-[150px]">
+      <div className="pt-[100px] md:pt-[120px]">
         
         {/* 1. HEADER */}
-        <header className="container mx-auto px-6 py-12 md:py-20 text-center">
+        <header className="container mx-auto px-6 py-12 md:py-16 text-center">
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -128,9 +142,12 @@ export default function Products() {
           </motion.p>
         </header>
 
-        {/* 2. FILTER BAR (Sticky) */}
-        <div className="sticky top-[100px] z-40 bg-home-bg/80 backdrop-blur-xl border-y border-gold-primary/10">
-          <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+        {/* --- 2. FILTER BAR (STICKY & THINNER) --- */}
+        {/* UPDATED: Changed top-[100px] to top-[80px] to fit under navbar. */}
+        {/* UPDATED: If your navbar is shorter, change top-[80px] to top-[60px] */}
+        <div className="sticky top-[70px] md:top-[80px] z-40 bg-home-bg/85 backdrop-blur-xl border-y border-gold-primary/10 transition-all duration-300">
+          {/* UPDATED: Changed h-16 to h-12 for a thinner profile */}
+          <div className="container mx-auto px-6 h-12 flex items-center justify-between">
             
             {/* Desktop Filters */}
             <div className="hidden md:flex gap-8">
@@ -138,7 +155,7 @@ export default function Products() {
                 <button
                   key={g}
                   onClick={() => handleGenderChange(g)}
-                  className={`text-xs uppercase tracking-[0.2em] transition-colors ${
+                  className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${
                     activeGender === g ? "text-gold-primary font-bold" : "text-home-subtext hover:text-home-text"
                   } ${isPending ? "opacity-50" : "opacity-100"}`}
                 >
@@ -149,32 +166,33 @@ export default function Products() {
 
             {/* Right Side: Price (Desktop) & Results Count */}
             <div className="flex items-center gap-6 ml-auto">
-              <div className="hidden md:flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-home-subtext relative group cursor-pointer">
-                <span>Price</span>
-                <PiCaretDown />
+              <div className="hidden md:flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-home-subtext relative group cursor-pointer h-full">
+                <span className="flex items-center gap-2">Price <PiCaretDown /></span>
                 
                 {/* Dropdown Menu */}
-                <div className="absolute top-full right-0 mt-4 w-48 bg-home-bg border border-gold-primary/20 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-2 flex flex-col gap-1">
-                  {FILTERS.price.map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => handlePriceChange(p)}
-                      className={`text-left px-4 py-3 text-[10px] uppercase tracking-widest hover:bg-gold-primary/10 ${
-                        activePrice === p ? "text-gold-primary" : "text-home-text"
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
+                <div className="absolute top-full right-0 mt-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                  <div className="w-48 bg-home-bg border border-gold-primary/20 shadow-xl p-2 flex flex-col gap-1">
+                    {FILTERS.price.map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => handlePriceChange(p)}
+                        className={`text-left px-4 py-3 text-[10px] uppercase tracking-widest hover:bg-gold-primary/10 ${
+                          activePrice === p ? "text-gold-primary" : "text-home-text"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Mobile Filter Toggle */}
+              {/* Mobile Filter Toggle (Thinner button) */}
               <button 
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="md:hidden flex items-center gap-2 text-xs uppercase tracking-widest border border-gold-primary/30 px-4 py-2 hover:bg-gold-primary hover:text-home-bg transition-colors"
+                className="md:hidden flex items-center gap-2 text-[10px] uppercase tracking-widest border border-gold-primary/30 px-3 py-1.5 hover:bg-gold-primary hover:text-home-bg transition-colors"
               >
-                <PiSlidersHorizontal className="text-lg" /> Filter
+                <PiSlidersHorizontal className="text-sm" /> Filter
               </button>
 
               <span className="text-[10px] text-gold-primary/60 font-mono">
@@ -306,77 +324,94 @@ export default function Products() {
   );
 }
 
-// --- PRODUCT CARD (With Reveal & Lazy Loading) ---
+// --- PRODUCT CARD ---
+// --- PRODUCT CARD ---
 function ProductCard({ product }) {
-  // Local state for quantity
-  const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState(1);
 
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.4 }}
-      className="group cursor-pointer"
-    >
-      <div className="relative w-full aspect-[4/5] overflow-hidden bg-home-text/5 mb-6">
-        {/* Main Image */}
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-out"
-        />
-        
-        {/* Hover Reveal Image */}
-        <img 
-          src={product.hoverImage || product.image} 
-          alt={`${product.name} detail`}
-          loading="lazy" 
-          className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out grayscale group-hover:grayscale-0"
-        />
+    // Helper function to prevent the Link from triggering when clicking buttons
+    const handleAction = (e, actionCallback) => {
+        e.preventDefault(); // Prevents navigation
+        e.stopPropagation(); // Prevents event bubbling
+        actionCallback();
+    };
 
-        {/* Luxury Frame */}
-        <div className="absolute inset-4 border border-gold-primary/0 group-hover:border-gold-primary/20 transition-all duration-500 pointer-events-none" />
-        
-        {/* Quick Add Overlay with Quantity */}
-        <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-home-bg/90 backdrop-blur-sm border-t border-gold-primary/10">
-          <div className="flex gap-2 w-full h-full">
-            {/* Quantity Controls */}
-            <div className="flex items-center justify-between px-2 py-3 border border-gold-primary/30 text-home-text w-24 bg-home-bg">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.max(1, q - 1)); }}
-                className="text-[10px] hover:text-gold-primary p-1"
-              >
-                <PiMinus />
-              </button>
-              <span className="text-[10px] font-bold">{quantity}</span>
-              <button 
-                onClick={(e) => { e.stopPropagation(); setQuantity(q => q + 1); }}
-                className="text-[10px] hover:text-gold-primary p-1"
-              >
-                <PiPlus />
-              </button>
-            </div>
+    return (
+        // 1. Wrap the entire card in a Link
+        <Link to={`/product/${product.id}`} className="block h-full">
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.4 }}
+            className="group cursor-pointer h-full"
+        >
+            <div className="relative w-full aspect-[4/5] overflow-hidden bg-home-text/5 mb-6">
+            {/* Main Image */}
+            <img 
+                src={product.image} 
+                alt={product.name} 
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-out"
+            />
             
-            {/* Add Button */}
-            <button className="flex-1 py-3 border border-gold-primary/30 text-[9px] uppercase tracking-[0.2em] hover:bg-gold-primary hover:text-home-bg transition-all">
-              Add - ${(product.price * quantity).toLocaleString()}
-            </button>
-          </div>
-        </div>
-      </div>
+            {/* Hover Reveal Image */}
+            <img 
+                src={product.hoverImage || product.image} 
+                alt={`${product.name} detail`}
+                loading="lazy" 
+                className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out grayscale group-hover:grayscale-0"
+            />
 
-      <div className="text-center">
-        <h3 className="text-2xl font-serif text-home-text mb-1">{product.name}</h3>
-        <p className="text-[10px] uppercase tracking-widest text-home-subtext mb-3">{product.category}</p>
-        <p className="text-gold-primary font-bold">${product.price}</p>
-      </div>
-    </motion.div>
-  );
+            {/* Luxury Frame */}
+            <div className="absolute inset-4 border border-gold-primary/0 group-hover:border-gold-primary/20 transition-all duration-500 pointer-events-none" />
+            
+            {/* Quick Add Overlay */}
+            <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-home-bg/90 backdrop-blur-sm border-t border-gold-primary/10">
+                <div className="flex gap-2 w-full h-full">
+                {/* Quantity Controls */}
+                <div className="flex items-center justify-between px-2 py-3 border border-gold-primary/30 text-home-text w-24 bg-home-bg">
+                    <button 
+                    // 2. Stop propagation so clicking (-) doesn't open the product page
+                    onClick={(e) => handleAction(e, () => setQuantity(q => Math.max(1, q - 1)))}
+                    className="text-[10px] hover:text-gold-primary p-1"
+                    >
+                    <PiMinus />
+                    </button>
+                    <span className="text-[10px] font-bold">{quantity}</span>
+                    <button 
+                    // 2. Stop propagation so clicking (+) doesn't open the product page
+                    onClick={(e) => handleAction(e, () => setQuantity(q => q + 1))}
+                    className="text-[10px] hover:text-gold-primary p-1"
+                    >
+                    <PiPlus />
+                    </button>
+                </div>
+                
+                {/* Add Button */}
+                <button 
+                    // 2. Stop propagation so clicking ADD doesn't open the product page
+                    onClick={(e) => handleAction(e, () => console.log(`Added ${quantity} of ${product.name}`))}
+                    className="flex-1 py-3 border border-gold-primary/30 text-[9px] uppercase tracking-[0.2em] hover:bg-gold-primary hover:text-home-bg transition-all"
+                >
+                    Add - ${(product.price * quantity).toLocaleString()}
+                </button>
+                </div>
+            </div>
+            </div>
+
+            <div className="text-center">
+            <h3 className="text-2xl font-serif text-home-text mb-1 group-hover:text-gold-primary transition-colors duration-300">
+                {product.name}
+            </h3>
+            <p className="text-[10px] uppercase tracking-widest text-home-subtext mb-3">{product.category}</p>
+            <p className="text-gold-primary font-bold">${product.price}</p>
+            </div>
+        </motion.div>
+        </Link>
+    );
 }
-
 // --- SKELETON COMPONENT ---
 function ProductSkeleton() {
   return (

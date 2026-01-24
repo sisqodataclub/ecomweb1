@@ -83,7 +83,7 @@ export default function Navbar() {
             <div className="hidden md:flex gap-8">
               {/* Linked Collection to /products */}
               <NavLink label="Collection" to="/products" />
-              <NavLink label="About Us" />
+              <NavLink label="About Us" to="/about" />
             </div>
 
             <button 
@@ -114,8 +114,8 @@ export default function Navbar() {
           {/* --- RIGHT: Desktop Links + Cart --- */}
           <div className="flex-1 flex justify-end items-center gap-8">
             <div className="hidden md:flex gap-8">
-              <NavLink label="Men" />
-              <NavLink label="Women" />
+                <NavLink label="Men" to="/products?gender=Men" />
+                <NavLink label="Women" to="/products?gender=Women" />
             </div>
             
             {/* Cart Icon Linked to /cart */}
@@ -164,13 +164,17 @@ export default function Navbar() {
               <div className="flex-1 flex flex-col justify-center px-8 relative">
                   <div className="absolute -right-20 top-1/4 w-64 h-64 bg-gold-primary/5 rounded-full blur-[80px] pointer-events-none" />
 
-                  <motion.div variants={containerVars} className="flex flex-col gap-5">
+                  {/* ... inside the Mobile Menu container ... */}
+                <motion.div variants={containerVars} className="flex flex-col gap-5">
                     <MobileNavLink index="01" label="Collections" to="/products" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="02" label="Men" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="03" label="Women" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="04" label="For You" onClick={() => setIsMobileMenuOpen(false)} />
+                    <MobileNavLink index="02" label="About Us" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
+                    
+                    {/* UPDATE THESE TWO LINES: */}
+                    <MobileNavLink index="03" label="Women" to="/products?gender=Women" onClick={() => setIsMobileMenuOpen(false)} />
+                    <MobileNavLink index="04" label="Men" to="/products?gender=Men" onClick={() => setIsMobileMenuOpen(false)} />
+                    
                     <MobileNavLink index="05" label="T&C" onClick={() => setIsMobileMenuOpen(false)} />
-                  </motion.div>
+                </motion.div>
               </div>
 
               {/* Minimal Footer inside Menu */}
