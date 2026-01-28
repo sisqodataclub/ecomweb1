@@ -10,13 +10,24 @@ export default function ProductGrid() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        // ✅ USE THE CURRENT DOMAIN instead of hardcoding 'core'
-        // This ensures that on web.franciscodes.com, it calls web.franciscodes.com
-        const response = await fetch(`${window.location.origin}/api/products/`);
+        // 1. Always call the 'core' domain where the backend lives
+        const response = await fetch("https://core.franciscodes.com/api/products/", {
+          headers: {
+            "Accept": "application/json",
+            // 2. Force the backend to look at 'web' products
+            "X-Tenant": "web.franciscodes.com" 
+          }
+        });
         
+        // Check if the response is actually JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+           throw new TypeError("Oops, the server didn't return JSON!");
+        }
+
         const data = await response.json();
         
-        // ✅ Target data.results because your API is paginated
+        // 3. Extract the results from the paginated object
         if (data && data.results) {
           setProducts(data.results);
         } else {
