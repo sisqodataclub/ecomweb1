@@ -1,97 +1,75 @@
-import { motion } from "framer-motion";
+"use client";
 
-const PERFUMES = [
-  {
-    id: 1,
-    name: "Oud Royale",
-    notes: "Agarwood, Praline, Clove",
-    price: "$240",
-    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    id: 2,
-    name: "Midnight Rose",
-    notes: "Damask Rose, Amber, Oud",
-    price: "$195",
-    image: "/a1.png", // Updated to use your local image
-  },
-  {
-    id: 3,
-    name: "Golden Saffron",
-    notes: "Saffron, Leather, Juniper",
-    price: "$210",
-    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600",
-  },
-];
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function ProductGrid() {
-  return (
-    <section className="bg-home-bg py-20 md:py-32 px-6 transition-colors duration-1000 relative overflow-hidden">
-      {/* Background Ambient Glow (matching HomeContent) */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gold-primary/5 blur-[120px] pointer-events-none" />
-      
-      <div className="container mx-auto max-w-7xl relative z-10">
-        
-        {/* Section Header */}
-        <div className="flex flex-col items-center mb-12 md:mb-20 text-center">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-home-text text-3xl md:text-5xl font-serif mb-6 italic"
-          >
-            Signature <span className="text-gold-primary not-italic">Collection</span>
-          </motion.h2>
-          <motion.div 
-            initial={{ width: 0 }}
-            whileInView={{ width: 80 }}
-            viewport={{ once: true }}
-            className="h-[1px] bg-gold-primary/40" 
-          />
-        </div>
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-        {/* Responsive Grid: 1 col on mobile, 2 on tablet, 3 on desktop */}
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        // We use the full absolute URL of your backend
+        // Your middleware identifies "web.franciscodes.com" automatically
+        const response = await fetch("https://core.franciscodes.com/api/products/", {
+            headers: {
+                // IMPORTANT: If your backend is strict, you might need to pass the
+                // origin or a custom header, but usually the 'Host' or 'Referer' works.
+                "Accept": "application/json",
+            }
+        });
+        
+        const data = await response.json();
+        
+        // Handle DRF pagination (data.results) or direct list
+        const results = Array.isArray(data) ? data : data.results || [];
+        setProducts(results);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <div className="py-20 text-center text-gold-primary">Loading...</div>;
+
+  return (
+    <section className="bg-home-bg py-20 px-6 relative overflow-hidden">
+      <div className="container mx-auto max-w-7xl relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {PERFUMES.map((perfume, index) => (
+          {products.map((product, index) => (
             <motion.div
-              key={perfume.id}
+              key={product.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
               className="group relative flex flex-col items-center"
             >
-              {/* Product Card Container */}
-              <div className="relative w-full aspect-[4/5] overflow-hidden border border-gold-primary/10 bg-black/5 shadow-xl transition-all duration-700 group-hover:border-gold-primary/30">
+              <div className="relative w-full aspect-[4/5] overflow-hidden border border-gold-primary/10">
                 <img
-                  src={perfume.image}
-                  alt={perfume.name}
-                  className="w-full h-full object-cover opacity-80 md:grayscale md:opacity-60 transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-100"
+                  src={product.image_url || "https://via.placeholder.com/400x500?text=Perfume"}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
                 />
-                
-                {/* Minimalist Gold Overlay Frame */}
-                <div className="absolute inset-4 border border-gold-primary/0 transition-all duration-700 group-hover:border-gold-primary/10 pointer-events-none" />
               </div>
 
-              {/* Product Info */}
               <div className="mt-8 text-center px-2">
-                <h3 className="text-gold-primary font-serif text-xl md:text-2xl mb-2 tracking-tight">
-                  {perfume.name}
+                <h3 className="text-gold-primary font-serif text-xl md:text-2xl mb-2">
+                  {product.name}
                 </h3>
-                <p className="text-home-subtext text-xs md:text-sm italic mb-4 opacity-70">
-                  {perfume.notes}
+                <p className="text-home-subtext text-xs italic mb-4">
+                  {/* Showing category or brand as the "notes" */}
+                  {product.brand || product.category}
                 </p>
                 <div className="flex flex-col items-center gap-4">
-                  <p className="text-home-text font-light tracking-[0.2em] text-sm">
-                    {perfume.price}
+                  <p className="text-home-text font-light tracking-widest">
+                    ${product.price}
                   </p>
-                  
-                  {/* Action Button: More visible on mobile, animated on desktop */}
-                  <button className="relative px-6 py-2 text-[10px] uppercase tracking-[0.3em] text-gold-primary border border-gold-primary/20 hover:border-gold-primary transition-all duration-500 cursor-pointer overflow-hidden group/btn">
-                    <span className="relative z-10 transition-colors duration-500 group-hover/btn:text-home-bg">
-                      Add to Collection
-                    </span>
-                    <div className="absolute inset-0 bg-gold-primary translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
+                  <button className="px-6 py-2 text-[10px] uppercase border border-gold-primary/20 hover:bg-gold-primary hover:text-black transition-all">
+                    Add to Collection
                   </button>
                 </div>
               </div>
