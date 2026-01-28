@@ -10,28 +10,24 @@ export default function ProductGrid() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        // We use the full absolute URL of your backend
-        // Your middleware identifies "web.franciscodes.com" automatically
-        const response = await fetch("https://core.franciscodes.com/api/products/", {
-            headers: {
-                // IMPORTANT: If your backend is strict, you might need to pass the
-                // origin or a custom header, but usually the 'Host' or 'Referer' works.
-                "Accept": "application/json",
-            }
-        });
+        // ✅ USE THE CURRENT DOMAIN instead of hardcoding 'core'
+        // This ensures that on web.franciscodes.com, it calls web.franciscodes.com
+        const response = await fetch(`${window.location.origin}/api/products/`);
         
         const data = await response.json();
         
-        // Handle DRF pagination (data.results) or direct list
-        const results = Array.isArray(data) ? data : data.results || [];
-        setProducts(results);
+        // ✅ Target data.results because your API is paginated
+        if (data && data.results) {
+          setProducts(data.results);
+        } else {
+          setProducts(Array.isArray(data) ? data : []);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
       }
     }
-
     fetchProducts();
   }, []);
 
