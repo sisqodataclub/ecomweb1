@@ -9,7 +9,16 @@
   --color-gold-primary: #947a25;   
 }
 
-/* 2. CHAMPAGNE */
+/* 2. ONYX - Dark Gold Theme */
+[data-theme-color='onyx'] {
+  --color-home-bg: #0f0f0f;        /* Deep black background */
+  --color-home-text: #f5f5f5;      /* Pure white text */
+  --color-home-subtext: #a8a8a8;   /* Light gray for subtext */
+  --color-home-glow: #2a240f;      /* Dark gold glow */
+  --color-gold-primary: #d4af37;   /* Rich, vibrant gold */
+}
+
+/* 3. CHAMPAGNE */
 [data-theme-color='champagne'] {
   --color-home-bg: #f9f5eb;
   --color-home-text: #4a3b1d;
@@ -18,7 +27,7 @@
   --color-gold-primary: #a68b32;
 }
 
-/* 3. PEARL */
+/* 4. PEARL */
 [data-theme-color='pearl'] {
   --color-home-bg: #f4f4f4;
   --color-home-text: #1a1a1a;
@@ -27,7 +36,7 @@
   --color-gold-primary: #7a6a4d;
 }
 
-/* 4. SAFFRON */
+/* 5. SAFFRON */
 [data-theme-color='saffron'] {
   --color-home-bg: #fffcf2;
   --color-home-text: #3d2b08;
@@ -36,7 +45,7 @@
   --color-gold-primary: #bf8f00;
 }
 
-/* 5. LINEN */
+/* 6. LINEN */
 [data-theme-color='linen'] {
   --color-home-bg: #ede9e1;
   --color-home-text: #2c2a26;
@@ -45,7 +54,7 @@
   --color-gold-primary: #8c764d;
 }
 
-/* 6. ROYAL (White, Gold, Red) */
+/* 7. ROYAL (White, Gold, Red) */
 [data-theme-color='royal'] {
   --color-home-bg: #ffffff;
   --color-home-text: #450a0a;
@@ -54,13 +63,52 @@
   --color-gold-primary: #d4af37;
 }
 
-/* 7. PURE GOLD */
+/* 8. PURE GOLD */
 [data-theme-color='pure-gold'] {
   --color-home-bg: #e2d484b0; 
   --color-home-text: #261f0d;
   --color-home-subtext: #5c4d26;
   --color-home-glow: #fffbe6;
   --color-gold-primary: #ffffff;
+}
+
+/* DARK THEME UTILITIES */
+[data-theme-color='onyx'] {
+  --border-subtle: rgba(212, 175, 55, 0.15); /* Gold subtle borders */
+  --card-bg: rgba(30, 30, 30, 0.8); /* Dark card backgrounds */
+  --card-border: rgba(212, 175, 55, 0.2); /* Gold card borders */
+}
+
+/* Additional dark theme utilities */
+[data-theme-color='onyx'] .dark-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+}
+
+[data-theme-color='onyx'] .dark-button {
+  background: linear-gradient(135deg, #2a240f 0%, #0f0f0f 100%);
+  border: 1px solid var(--color-gold-primary);
+  color: var(--color-gold-primary);
+  transition: all 0.3s ease;
+}
+
+[data-theme-color='onyx'] .dark-button:hover {
+  background: linear-gradient(135deg, var(--color-gold-primary) 0%, #d4af37 100%);
+  color: var(--color-home-bg);
+  border-color: var(--color-gold-primary);
+}
+
+[data-theme-color='onyx'] .dark-overlay {
+  background: linear-gradient(to bottom, rgba(15, 15, 15, 0.9), rgba(15, 15, 15, 0.7));
+}
+
+[data-theme-color='onyx'] .gold-glow {
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+}
+
+[data-theme-color='onyx'] .subtle-glow {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
 }
 
 /* BORDERS & BLENDING */
@@ -72,6 +120,11 @@
 [data-theme-color='default'],
 [data-theme-color='pure-gold'] {
   --border-subtle: rgba(148, 122, 37, 0.1);
+}
+
+/* Special for Onyx theme borders */
+[data-theme-color='onyx'] {
+  --border-subtle: rgba(212, 175, 55, 0.1);
 }
 
 /* METALLIC SHIMMER ANIMATION */
@@ -95,6 +148,37 @@
   animation: shimmer 6s linear infinite;
 }
 
+/* Enhanced shimmer for dark theme */
+[data-theme-color='onyx'] .text-shimmer {
+  background: linear-gradient(
+    90deg, 
+    #d4af37 0%, 
+    #ffed86 25%, 
+    #d4af37 50%, 
+    #ffed86 75%, 
+    #d4af37 100%
+  );
+}
+
+/* Dark theme specific animations */
+@keyframes gold-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+[data-theme-color='onyx'] .gold-pulse {
+  animation: gold-pulse 3s ease-in-out infinite;
+}
+
+@keyframes float-glow {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
+  50% { transform: translateY(-10px) scale(1.05); opacity: 0.8; }
+}
+
+[data-theme-color='onyx'] .float-glow {
+  animation: float-glow 4s ease-in-out infinite;
+}
+
 /* UTILITIES */
 @utility vertical-text {
   writing-mode: vertical-rl;
@@ -103,6 +187,13 @@
 
 @utility moroccan-border {
   border: 1px solid var(--color-gold-primary);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+}
+
+/* Dark theme border variation */
+@utility dark-moroccan-border {
+  border: 1px solid var(--color-gold-primary);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
   mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
@@ -118,4 +209,47 @@
 .blend-morocco {
   mix-blend-mode: multiply;
   mask-image: linear-gradient(to right, black 20%, transparent 100%);
+}
+
+/* Dark theme blend mode */
+[data-theme-color='onyx'] .blend-morocco {
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(to right, black 20%, transparent 100%);
+}
+
+/* Additional utility for gold gradients */
+@utility gold-gradient {
+  background: linear-gradient(135deg, var(--color-gold-primary), #ffed86);
+}
+
+@utility dark-gold-gradient {
+  background: linear-gradient(135deg, #2a240f, #0f0f0f, #2a240f);
+}
+
+/* Text stroke effect for dark theme */
+[data-theme-color='onyx'] .gold-stroke {
+  -webkit-text-stroke: 1px var(--color-gold-primary);
+  color: transparent;
+}
+
+/* Custom scrollbar for dark theme */
+[data-theme-color='onyx'] {
+  scrollbar-color: var(--color-gold-primary) #1a1a1a;
+}
+
+[data-theme-color='onyx'] ::-webkit-scrollbar {
+  width: 10px;
+}
+
+[data-theme-color='onyx'] ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+[data-theme-color='onyx'] ::-webkit-scrollbar-thumb {
+  background: var(--color-gold-primary);
+  border-radius: 5px;
+}
+
+[data-theme-color='onyx'] ::-webkit-scrollbar-thumb:hover {
+  background: #ffed86;
 }
