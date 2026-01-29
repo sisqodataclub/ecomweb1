@@ -1,60 +1,11 @@
 import { useState, useMemo, useTransition, useEffect } from "react"; 
 import { useSearchParams } from "react-router"; 
-import { Link } from "react-router"; // Ensure this is imported
+import { Link } from "react-router"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { PiSlidersHorizontal, PiX, PiCheck, PiCaretDown, PiMinus, PiPlus } from "react-icons/pi";
-// !!! IMPORT YOUR NAVBAR HERE !!!
 import Navbar from "~/components/home/Navbar";
 
-// --- MOCK DATA ---
-const PRODUCTS = [
-  { 
-    id: 1, name: "Oud Royale", category: "Unisex", gender: "unisex", price: 240, 
-    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    id: 2, name: "Midnight Rose", category: "Floral", gender: "women", price: 195, 
-    image: "/a1.png",
-    hoverImage: "/a1.png" 
-  },
-  { 
-    id: 3, name: "Golden Saffron", category: "Spicy", gender: "men", price: 210, 
-    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    id: 4, name: "Atlas Cedar", category: "Woody", gender: "men", price: 180, 
-    image: "/a2.png",
-    hoverImage: "/a2.png" 
-  },
-  { 
-    id: 5, name: "Desert Amber", category: "Oriental", gender: "women", price: 260, 
-    image: "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1557827983-012eb6ea8dc1?auto=format&fit=crop&q=80&w=600" 
-  },
-  { 
-    id: 6, name: "Vetiver Noir", category: "Earthy", gender: "men", price: 220, 
-    image: "/a3.png",
-    hoverImage: "/a3.png"
-  },
-  { 
-    id: 7, name: "Cedar", category: "Woody", gender: "men", price: 80, 
-    image: "/a3.png",
-    hoverImage: "/a3.png"
-  },
-  { 
-    id: 8, name: "Amber", category: "Oriental", gender: "women", price: 60, 
-    image: "/a2.png",
-    hoverImage: "/a2.png" 
-  },
-  { 
-    id: 9, name: "Vetiver", category: "Earthy", gender: "men", price: 220, 
-    image: "/a1.png",
-    hoverImage: "/a1.png"
-  },
-];
-
+// --- FILTERS CONSTANTS ---
 const FILTERS = {
   gender: ["All", "Men", "Women", "Unisex"],
   price: ["All", "Under $200", "$200 - $250", "$250+"],
@@ -62,10 +13,48 @@ const FILTERS = {
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [products, setProducts] = useState([]); // Store API data
+  const [isLoading, setIsLoading] = useState(true); // Initial loading state
+
+  // Filter States
   const [activeGender, setActiveGender] = useState(searchParams.get("gender") || "All");
   const [activePrice, setActivePrice] = useState("All");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [visibleCount, setVisibleCount] = useState(6); 
 
+  // --- 1. FETCH DATA FROM API ---
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetch("https://core.franciscodes.com/api/products/", {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "X-Tenant": "web"
+          }
+        });
+
+        const data = await response.json();
+        
+        let results = [];
+        if (data.results && Array.isArray(data.results)) {
+          results = data.results;
+        } else if (Array.isArray(data)) {
+          results = data;
+        }
+
+        setProducts(results);
+      } catch (error) {
+        console.error("❌ Product fetch error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  // --- 2. SYNC URL PARAMS ---
   useEffect(() => {
     const genderFromUrl = searchParams.get("gender");
     if (genderFromUrl) {
@@ -74,23 +63,27 @@ export default function Products() {
       setActiveGender("All");
     }
   }, [searchParams]);
-  
-  const [isPending, startTransition] = useTransition();
-  const [visibleCount, setVisibleCount] = useState(6); 
 
+  // --- 3. FILTER LOGIC ---
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
-      const genderMatch = activeGender === "All" || product.gender.toLowerCase() === activeGender.toLowerCase();
+    return products.filter((product) => {
+      // API might return "Men", "men", or "Unisex" - so we normalize toLowerCase
+      const productGender = product.gender ? product.gender.toLowerCase() : "unisex"; 
+      const selectedGender = activeGender.toLowerCase();
+
+      const genderMatch = activeGender === "All" || productGender === selectedGender;
       
       let priceMatch = true;
-      if (activePrice === "Under $200") priceMatch = product.price < 200;
-      if (activePrice === "$200 - $250") priceMatch = product.price >= 200 && product.price <= 250;
-      if (activePrice === "$250+") priceMatch = product.price > 250;
+      const price = parseFloat(product.price);
+      if (activePrice === "Under $200") priceMatch = price < 200;
+      if (activePrice === "$200 - $250") priceMatch = price >= 200 && price <= 250;
+      if (activePrice === "$250+") priceMatch = price > 250;
 
       return genderMatch && priceMatch;
     });
-  }, [activeGender, activePrice]);
+  }, [products, activeGender, activePrice]);
 
+  // --- HANDLERS ---
   const handleGenderChange = (g) => {
     startTransition(() => {
       setActiveGender(g);
@@ -117,13 +110,11 @@ export default function Products() {
 
   return (
     <div className="pt-24 min-h-screen bg-home-bg text-home-text transition-colors duration-700">
-      {/* 1. THE NAVBAR */}
       <Navbar />
 
-      {/* 2. MAIN CONTENT WRAPPER */}
       <div className="pt-[100px] md:pt-[120px]">
         
-        {/* 1. HEADER */}
+        {/* HEADER */}
         <header className="container mx-auto px-6 py-12 md:py-16 text-center">
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
@@ -142,14 +133,10 @@ export default function Products() {
           </motion.p>
         </header>
 
-        {/* --- 2. FILTER BAR (STICKY & THINNER) --- */}
-        {/* UPDATED: Changed top-[100px] to top-[80px] to fit under navbar. */}
-        {/* UPDATED: If your navbar is shorter, change top-[80px] to top-[60px] */}
+        {/* FILTER BAR */}
         <div className="sticky top-[70px] md:top-[80px] z-40 bg-home-bg/85 backdrop-blur-xl border-y border-gold-primary/10 transition-all duration-300">
-          {/* UPDATED: Changed h-16 to h-12 for a thinner profile */}
           <div className="container mx-auto px-6 h-12 flex items-center justify-between">
             
-            {/* Desktop Filters */}
             <div className="hidden md:flex gap-8">
               {FILTERS.gender.map((g) => (
                 <button
@@ -164,12 +151,9 @@ export default function Products() {
               ))}
             </div>
 
-            {/* Right Side: Price (Desktop) & Results Count */}
             <div className="flex items-center gap-6 ml-auto">
               <div className="hidden md:flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-home-subtext relative group cursor-pointer h-full">
                 <span className="flex items-center gap-2">Price <PiCaretDown /></span>
-                
-                {/* Dropdown Menu */}
                 <div className="absolute top-full right-0 mt-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                   <div className="w-48 bg-home-bg border border-gold-primary/20 shadow-xl p-2 flex flex-col gap-1">
                     {FILTERS.price.map((p) => (
@@ -187,7 +171,6 @@ export default function Products() {
                 </div>
               </div>
 
-              {/* Mobile Filter Toggle (Thinner button) */}
               <button 
                 onClick={() => setIsMobileFilterOpen(true)}
                 className="md:hidden flex items-center gap-2 text-[10px] uppercase tracking-widest border border-gold-primary/30 px-3 py-1.5 hover:bg-gold-primary hover:text-home-bg transition-colors"
@@ -202,15 +185,13 @@ export default function Products() {
           </div>
         </div>
 
-        {/* 3. PRODUCT GRID */}
+        {/* PRODUCT GRID */}
         <div className="container mx-auto px-6 py-12 md:py-20 min-h-[60vh]">
           <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
             <AnimatePresence mode="popLayout">
-              {isPending ? (
-                // SKELETON LOADING STATE
+              {isLoading || isPending ? (
                 [...Array(3)].map((_, i) => <ProductSkeleton key={i} />)
               ) : (
-                // PRODUCTS RENDER
                 filteredProducts.length > 0 ? (
                   filteredProducts.slice(0, visibleCount).map((product) => (
                     <ProductCard key={product.id} product={product} />
@@ -229,7 +210,7 @@ export default function Products() {
           </motion.div>
 
           {/* Load More Button */}
-          {!isPending && filteredProducts.length > visibleCount && (
+          {!isLoading && !isPending && filteredProducts.length > visibleCount && (
             <div className="mt-20 text-center">
               <button 
                 onClick={handleLoadMore}
@@ -244,20 +225,15 @@ export default function Products() {
           )}
         </div>
 
-        {/* 4. MOBILE FILTER DRAWER */}
+        {/* MOBILE FILTER DRAWER */}
         <AnimatePresence>
           {isMobileFilterOpen && (
-            <motion.div 
-              className="fixed inset-0 z-[60] md:hidden"
-            >
-              {/* Backdrop */}
+            <motion.div className="fixed inset-0 z-[60] md:hidden">
               <motion.div 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 onClick={() => setIsMobileFilterOpen(false)}
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm"
               />
-              
-              {/* Drawer */}
               <motion.div
                 initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
@@ -269,7 +245,6 @@ export default function Products() {
                 </div>
 
                 <div className="p-8 overflow-y-auto space-y-10">
-                  {/* Gender Section */}
                   <div>
                     <h3 className="text-gold-primary text-xs uppercase tracking-[0.2em] mb-4 font-bold">Category</h3>
                     <div className="flex flex-wrap gap-3">
@@ -289,7 +264,6 @@ export default function Products() {
                     </div>
                   </div>
 
-                  {/* Price Section */}
                   <div>
                     <h3 className="text-gold-primary text-xs uppercase tracking-[0.2em] mb-4 font-bold">Price Range</h3>
                     <div className="flex flex-col gap-2">
@@ -325,93 +299,94 @@ export default function Products() {
 }
 
 // --- PRODUCT CARD ---
-// --- PRODUCT CARD ---
 function ProductCard({ product }) {
-    const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
 
-    // Helper function to prevent the Link from triggering when clicking buttons
-    const handleAction = (e, actionCallback) => {
-        e.preventDefault(); // Prevents navigation
-        e.stopPropagation(); // Prevents event bubbling
-        actionCallback();
-    };
+  // Helper to ensure we always have a valid image URL
+  const getImage = (prod) => {
+    const primary = prod.images?.find(img => img.is_primary);
+    if (primary?.image_url) return primary.image_url;
+    if (prod.images?.[0]?.image_url) return prod.images[0].image_url;
+    if (prod.image_url) return prod.image_url;
+    return "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=600&auto=format&fit=crop";
+  };
 
-    return (
-        // 1. Wrap the entire card in a Link
-        <Link to={`/product/${product.id}`} className="block h-full">
-        <motion.div
-            layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.4 }}
-            className="group cursor-pointer h-full"
-        >
-            <div className="relative w-full aspect-[4/5] overflow-hidden bg-home-text/5 mb-6">
-            {/* Main Image */}
-            <img 
-                src={product.image} 
-                alt={product.name} 
-                loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-out"
-            />
-            
-            {/* Hover Reveal Image */}
-            <img 
-                src={product.hoverImage || product.image} 
-                alt={`${product.name} detail`}
-                loading="lazy" 
-                className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out grayscale group-hover:grayscale-0"
-            />
+  const mainImage = getImage(product);
 
-            {/* Luxury Frame */}
-            <div className="absolute inset-4 border border-gold-primary/0 group-hover:border-gold-primary/20 transition-all duration-500 pointer-events-none" />
-            
-            {/* Quick Add Overlay */}
-            <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-home-bg/90 backdrop-blur-sm border-t border-gold-primary/10">
-                <div className="flex gap-2 w-full h-full">
-                {/* Quantity Controls */}
-                <div className="flex items-center justify-between px-2 py-3 border border-gold-primary/30 text-home-text w-24 bg-home-bg">
-                    <button 
-                    // 2. Stop propagation so clicking (-) doesn't open the product page
-                    onClick={(e) => handleAction(e, () => setQuantity(q => Math.max(1, q - 1)))}
-                    className="text-[10px] hover:text-gold-primary p-1"
-                    >
-                    <PiMinus />
-                    </button>
-                    <span className="text-[10px] font-bold">{quantity}</span>
-                    <button 
-                    // 2. Stop propagation so clicking (+) doesn't open the product page
-                    onClick={(e) => handleAction(e, () => setQuantity(q => q + 1))}
-                    className="text-[10px] hover:text-gold-primary p-1"
-                    >
-                    <PiPlus />
-                    </button>
-                </div>
-                
-                {/* Add Button */}
+  const handleAction = (e, actionCallback) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    actionCallback();
+  };
+
+  return (
+    <Link to={`/product/${product.id}`} className="block h-full">
+      <motion.div
+        layout
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.4 }}
+        className="group cursor-pointer h-full"
+      >
+        <div className="relative w-full aspect-[4/5] overflow-hidden bg-home-text/5 mb-6">
+          <img 
+            src={mainImage} 
+            alt={product.name} 
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-out"
+          />
+          
+          {/* Use same image for hover if no distinct hover image exists in API yet */}
+          <img 
+            src={mainImage} 
+            alt={`${product.name} detail`}
+            loading="lazy" 
+            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out grayscale group-hover:grayscale-0"
+          />
+
+          <div className="absolute inset-4 border border-gold-primary/0 group-hover:border-gold-primary/20 transition-all duration-500 pointer-events-none" />
+          
+          <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-home-bg/90 backdrop-blur-sm border-t border-gold-primary/10">
+            <div className="flex gap-2 w-full h-full">
+              <div className="flex items-center justify-between px-2 py-3 border border-gold-primary/30 text-home-text w-24 bg-home-bg">
                 <button 
-                    // 2. Stop propagation so clicking ADD doesn't open the product page
-                    onClick={(e) => handleAction(e, () => console.log(`Added ${quantity} of ${product.name}`))}
-                    className="flex-1 py-3 border border-gold-primary/30 text-[9px] uppercase tracking-[0.2em] hover:bg-gold-primary hover:text-home-bg transition-all"
+                  onClick={(e) => handleAction(e, () => setQuantity(q => Math.max(1, q - 1)))}
+                  className="text-[10px] hover:text-gold-primary p-1"
                 >
-                    Add - ${(product.price * quantity).toLocaleString()}
+                  <PiMinus />
                 </button>
-                </div>
+                <span className="text-[10px] font-bold">{quantity}</span>
+                <button 
+                  onClick={(e) => handleAction(e, () => setQuantity(q => q + 1))}
+                  className="text-[10px] hover:text-gold-primary p-1"
+                >
+                  <PiPlus />
+                </button>
+              </div>
+              
+              <button 
+                onClick={(e) => handleAction(e, () => console.log(`Added ${quantity} of ${product.name}`))}
+                className="flex-1 py-3 border border-gold-primary/30 text-[9px] uppercase tracking-[0.2em] hover:bg-gold-primary hover:text-home-bg transition-all"
+              >
+                Add - ${(parseFloat(product.price) * quantity).toFixed(2)}
+              </button>
             </div>
-            </div>
+          </div>
+        </div>
 
-            <div className="text-center">
-            <h3 className="text-2xl font-serif text-home-text mb-1 group-hover:text-gold-primary transition-colors duration-300">
-                {product.name}
-            </h3>
-            <p className="text-[10px] uppercase tracking-widest text-home-subtext mb-3">{product.category}</p>
-            <p className="text-gold-primary font-bold">${product.price}</p>
-            </div>
-        </motion.div>
-        </Link>
-    );
+        <div className="text-center">
+          <h3 className="text-2xl font-serif text-home-text mb-1 group-hover:text-gold-primary transition-colors duration-300">
+            {product.name}
+          </h3>
+          <p className="text-[10px] uppercase tracking-widest text-home-subtext mb-3">{product.category || "Extrait"}</p>
+          <p className="text-gold-primary font-bold">${parseFloat(product.price).toFixed(2)}</p>
+        </div>
+      </motion.div>
+    </Link>
+  );
 }
+
 // --- SKELETON COMPONENT ---
 function ProductSkeleton() {
   return (

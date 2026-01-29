@@ -75,7 +75,7 @@ export default function ProductGrid() {
             The Private Collection
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-home-text">
-            Iconic <span className="italic text-gold-primary">Essentials</span>
+            Best <span className="italic text-gold-primary">Seller</span>
           </h2>
         </motion.div>
 
