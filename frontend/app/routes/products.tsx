@@ -7,17 +7,19 @@ import Navbar from "~/components/home/Navbar";
 
 // --- FILTERS CONSTANTS ---
 const FILTERS = {
-  gender: ["All", "Men", "Women", "Unisex"],
+  // These match your database 'category' values
+  category: ["All", "Men", "Women", "Unisex"],
   price: ["All", "Under $200", "$200 - $250", "$250+"],
 };
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState([]); // Store API data
-  const [isLoading, setIsLoading] = useState(true); // Initial loading state
+  const [products, setProducts] = useState([]); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   // Filter States
-  const [activeGender, setActiveGender] = useState(searchParams.get("gender") || "All");
+  // We call it 'activeCategory' now instead of 'activeGender' for clarity
+  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "All");
   const [activePrice, setActivePrice] = useState("All");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -56,42 +58,46 @@ export default function Products() {
 
   // --- 2. SYNC URL PARAMS ---
   useEffect(() => {
-    const genderFromUrl = searchParams.get("gender");
-    if (genderFromUrl) {
-      setActiveGender(genderFromUrl);
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl) {
+      setActiveCategory(categoryFromUrl);
     } else {
-      setActiveGender("All");
+      setActiveCategory("All");
     }
   }, [searchParams]);
 
-  // --- 3. FILTER LOGIC ---
+  // --- 3. FILTER LOGIC (UPDATED TO USE CATEGORY) ---
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      // API might return "Men", "men", or "Unisex" - so we normalize toLowerCase
-      const productGender = product.gender ? product.gender.toLowerCase() : "unisex"; 
-      const selectedGender = activeGender.toLowerCase();
-
-      const genderMatch = activeGender === "All" || productGender === selectedGender;
+      // 1. Normalize Database Category
+      const productCat = product.category ? product.category.toLowerCase() : "unisex"; 
       
+      // 2. Normalize Selected Filter
+      const selectedCat = activeCategory.toLowerCase();
+
+      // 3. Match
+      const categoryMatch = activeCategory === "All" || productCat === selectedCat;
+      
+      // 4. Price Logic
       let priceMatch = true;
       const price = parseFloat(product.price);
       if (activePrice === "Under $200") priceMatch = price < 200;
       if (activePrice === "$200 - $250") priceMatch = price >= 200 && price <= 250;
       if (activePrice === "$250+") priceMatch = price > 250;
 
-      return genderMatch && priceMatch;
+      return categoryMatch && priceMatch;
     });
-  }, [products, activeGender, activePrice]);
+  }, [products, activeCategory, activePrice]);
 
   // --- HANDLERS ---
-  const handleGenderChange = (g) => {
+  const handleCategoryChange = (c) => {
     startTransition(() => {
-      setActiveGender(g);
+      setActiveCategory(c);
       setVisibleCount(6);
-      if (g === "All") {
-        searchParams.delete("gender");
+      if (c === "All") {
+        searchParams.delete("category");
       } else {
-        searchParams.set("gender", g);
+        searchParams.set("category", c);
       }
       setSearchParams(searchParams);
     });
@@ -137,16 +143,17 @@ export default function Products() {
         <div className="sticky top-[70px] md:top-[80px] z-40 bg-home-bg/85 backdrop-blur-xl border-y border-gold-primary/10 transition-all duration-300">
           <div className="container mx-auto px-6 h-12 flex items-center justify-between">
             
+            {/* Desktop Category Filters */}
             <div className="hidden md:flex gap-8">
-              {FILTERS.gender.map((g) => (
+              {FILTERS.category.map((c) => (
                 <button
-                  key={g}
-                  onClick={() => handleGenderChange(g)}
+                  key={c}
+                  onClick={() => handleCategoryChange(c)}
                   className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${
-                    activeGender === g ? "text-gold-primary font-bold" : "text-home-subtext hover:text-home-text"
+                    activeCategory === c ? "text-gold-primary font-bold" : "text-home-subtext hover:text-home-text"
                   } ${isPending ? "opacity-50" : "opacity-100"}`}
                 >
-                  {g}
+                  {c}
                 </button>
               ))}
             </div>
@@ -248,17 +255,17 @@ export default function Products() {
                   <div>
                     <h3 className="text-gold-primary text-xs uppercase tracking-[0.2em] mb-4 font-bold">Category</h3>
                     <div className="flex flex-wrap gap-3">
-                      {FILTERS.gender.map((g) => (
+                      {FILTERS.category.map((c) => (
                         <button
-                          key={g}
-                          onClick={() => handleGenderChange(g)}
+                          key={c}
+                          onClick={() => handleCategoryChange(c)}
                           className={`px-6 py-3 border text-[10px] uppercase tracking-widest transition-all ${
-                            activeGender === g 
+                            activeCategory === c 
                               ? "bg-gold-primary text-home-bg border-gold-primary" 
                               : "border-home-text/20 text-home-text"
                           }`}
                         >
-                          {g}
+                          {c}
                         </button>
                       ))}
                     </div>
@@ -302,7 +309,6 @@ export default function Products() {
 function ProductCard({ product }) {
   const [quantity, setQuantity] = useState(1);
 
-  // Helper to ensure we always have a valid image URL
   const getImage = (prod) => {
     const primary = prod.images?.find(img => img.is_primary);
     if (primary?.image_url) return primary.image_url;
@@ -337,7 +343,6 @@ function ProductCard({ product }) {
             className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-out"
           />
           
-          {/* Use same image for hover if no distinct hover image exists in API yet */}
           <img 
             src={mainImage} 
             alt={`${product.name} detail`}

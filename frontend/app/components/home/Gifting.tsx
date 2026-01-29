@@ -67,14 +67,14 @@ export default function Gifting() {
           </h2>
           
           <p className="text-home-subtext font-light leading-relaxed mb-10 text-base md:text-lg max-w-md mx-auto md:mx-0">
-            Every Maison Aurum creation arrives in our signature lacquered box, 
+            Every Maison Équiva Iconic creation arrives in our signature lacquered box, 
             hand-wrapped in silk tissue. Add a personalized message engraved into the glass 
             flacon for a truly bespoke experience.
           </p>
           
           <button className="group relative px-10 py-4 bg-transparent border border-gold-primary/40 text-home-text text-[10px] uppercase tracking-[0.3em] font-black hover:border-gold-primary transition-all duration-500 overflow-hidden cursor-pointer">
             <span className="relative z-10 group-hover:text-home-bg transition-colors duration-500">
-                Explore Gifting
+                Shop Now
             </span>
             <div className="absolute inset-0 bg-gold-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
           </button>
