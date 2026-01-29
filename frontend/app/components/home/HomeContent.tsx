@@ -11,14 +11,14 @@ import {
 
 // --- CONSTANTS ---
 const COLORS = [
-//  { id: "default", bg: "#fdfcf7", label: "Ivory" },
-//  { id: "champagne", bg: "#f9f5eb", label: "Champagne" },
+//   { id: "default", bg: "#fdfcf7", label: "Ivory" },
+//   { id: "champagne", bg: "#f9f5eb", label: "Champagne" },
   { id: "pearl", bg: "#f4f4f4", label: "Pearl" },
   { id: "saffron", bg: "#fffcf2", label: "Saffron" },
   { id: "linen", bg: "#ede9e1", label: "Linen" },
-//  { id: "royal", bg: "#ffffff", label: "Royal" },
-//  { id: "pure-gold", bg: "#e6c200", label: "Pure Gold" },
-  { id: "onyx", bg: "#0f0f0f", label: "Onyx" }, // Added Onyx theme
+//   { id: "royal", bg: "#ffffff", label: "Royal" },
+//   { id: "pure-gold", bg: "#e6c200", label: "Pure Gold" },
+  { id: "onyx", bg: "#0f0f0f", label: "Onyx" }, 
   { id: "obsidian", bg: "#050505", label: "Obsidian" }, // New Theme
 ];
 
@@ -26,7 +26,7 @@ const LAYOUTS = [
   { id: "rabat", label: "Rabat" },
   { id: "minaret", label: "The Minaret" },
   { id: "ritual", label: "The Oud Ritual" },
-//  { id: "kasbah", label: "The Kasbah" },
+//   { id: "kasbah", label: "The Kasbah" },
   { id: "monolith", label: "The Monolith" },
 ];
 
@@ -34,9 +34,12 @@ const LAYOUTS = [
 // --- MAIN COMPONENT ---
 export default function HomeContent() {
   const [layout, setLayout] = useState("rabat");
-  const [color, setColor] = useState("default");
+  
+  // ✅ UPDATE 1: Set "obsidian" as the default state
+  const [color, setColor] = useState("obsidian");
+  
   const [showControls, setShowControls] = useState(true);
-  // Update this to handle both dark themes
+  
   const isDarkTheme = color === "onyx" || color === "obsidian";
 
   useEffect(() => {
@@ -136,7 +139,7 @@ export default function HomeContent() {
                   onClick={() => setColor(c.id)}
                   className={`w-6 h-6 rounded-full transition-all cursor-pointer relative group ${
                     color === c.id 
-                      ? `${c.id === "onyx" 
+                      ? `${c.id === "onyx" || c.id === "obsidian" 
                           ? "ring-2 ring-gold-primary ring-offset-2 ring-offset-black scale-110"
                           : "ring-2 ring-gold-primary ring-offset-2 ring-offset-home-bg scale-110"
                         }` 
@@ -144,13 +147,13 @@ export default function HomeContent() {
                   }`}
                   style={{ 
                     backgroundColor: c.bg, 
-                    border: c.id === "onyx" 
+                    border: c.id === "onyx" || c.id === "obsidian" 
                       ? '1px solid rgba(212, 175, 55, 0.3)' 
                       : '1px solid rgba(0,0,0,0.1)' 
                   }}
                   title={c.label}
                 >
-                  {c.id === "onyx" && (
+                  {(c.id === "onyx" || c.id === "obsidian") && (
                     <div className="absolute inset-0 rounded-full border border-gold-primary/50 group-hover:border-gold-primary transition-colors"></div>
                   )}
                 </button>
@@ -189,7 +192,8 @@ export default function HomeContent() {
 
 // --- LAYOUT RENDERER ---
 function renderLayoutContent(layout: string, color: string) {
-  const isDarkTheme = color === "onyx";
+  // ✅ UPDATE 2: Ensure the renderer knows Obsidian is also a dark theme
+  const isDarkTheme = color === "onyx" || color === "obsidian";
   
   switch (layout) {
     case "rabat":

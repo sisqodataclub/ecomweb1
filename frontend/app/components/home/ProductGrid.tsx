@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // ✅ IMPORT LINK
+import { Link } from "react-router-dom";
 import { PiHandbag } from "react-icons/pi";
 
 export default function ProductGrid() {
@@ -61,7 +61,7 @@ export default function ProductGrid() {
   }
 
   return (
-    <section className="bg-home-bg py-24 px-4 md:px-8 relative z-10 transition-colors duration-1000">
+    <section className="bg-home-bg py-24 px-0 md:px-8 relative z-10 transition-colors duration-1000">
       <div className="container mx-auto max-w-[1400px]">
         
         {/* SECTION HEADER */}
@@ -69,7 +69,7 @@ export default function ProductGrid() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16 md:mb-24"
+          className="text-center mb-10 md:mb-24 px-4"
         >
           <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-home-subtext block mb-3">
             The Private Collection
@@ -79,8 +79,14 @@ export default function ProductGrid() {
           </h2>
         </motion.div>
 
-        {/* PRODUCT GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 md:gap-y-16">
+        {/* PRODUCT CONTAINER 
+            Mobile: Flex + Overflow-X (Horizontal Scroll)
+            Desktop: Grid (Standard Layout)
+        */}
+        <div className="
+          flex gap-4 overflow-x-auto pb-8 px-4 snap-x snap-mandatory scroll-smooth no-scrollbar
+          md:grid md:grid-cols-4 md:gap-x-6 md:gap-y-16 md:pb-0 md:overflow-visible
+        ">
           {products.map((product, index) => (
             <motion.div
               key={product.id}
@@ -88,12 +94,15 @@ export default function ProductGrid() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="group flex flex-col relative"
+              className="
+                min-w-[45vw] md:min-w-0 
+                snap-center 
+                group flex flex-col relative
+              "
             >
               {/* IMAGE CONTAINER */}
-              <div className="relative w-full aspect-[3/4] overflow-hidden bg-neutral-100 mb-6">
+              <div className="relative w-full aspect-[3/4] overflow-hidden bg-neutral-100 mb-4 md:mb-6">
                 
-                {/* ✅ LINK WRAPPING THE IMAGE */}
                 <Link to={`/product/${product.id}`} className="block w-full h-full cursor-pointer">
                   {/* Decorative Border */}
                   <div className="absolute inset-0 border border-gold-primary/10 group-hover:border-gold-primary/40 transition-colors duration-500 z-20 pointer-events-none" />
@@ -108,29 +117,29 @@ export default function ProductGrid() {
                   />
                 </Link>
 
-                {/* QUICK ADD OVERLAY (Positioned absolutely so it sits on top of the link) */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-30 pointer-events-none">
-                  {/* Pointer events auto ensures the button is clickable, even though parent is pointer-events-none */}
+                {/* QUICK ADD OVERLAY (Desktop only - Mobile users tap to go to page) */}
+                <div className="hidden md:block absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-30 pointer-events-none">
                   <button className="w-full bg-home-text text-home-bg py-3 uppercase text-[10px] tracking-[0.2em] font-bold hover:bg-gold-primary transition-colors flex items-center justify-center gap-2 pointer-events-auto shadow-xl">
                     <PiHandbag size={14} /> Add to Cart
                   </button>
                 </div>
               </div>
 
-              {/* INFO (Also clickable via Link) */}
-              <div className="text-center px-2">
+              {/* INFO */}
+              <div className="text-center px-1">
                 <Link to={`/product/${product.id}`} className="block">
-                  <h3 className="text-home-text font-serif text-xl md:text-2xl mb-1 group-hover:text-gold-primary transition-colors duration-300">
+                  {/* Smaller font on mobile to fit the smaller card */}
+                  <h3 className="text-home-text font-serif text-base md:text-2xl mb-1 group-hover:text-gold-primary transition-colors duration-300 truncate">
                     {product.name}
                   </h3>
                 </Link>
                 
-                <p className="text-[10px] text-home-subtext uppercase tracking-widest mb-3 opacity-60">
-                  {product.category || "Extrait de Parfum"}
+                <p className="text-[8px] md:text-[10px] text-home-subtext uppercase tracking-widest mb-2 md:mb-3 opacity-60">
+                  {product.category || "Extrait"}
                 </p>
 
                 <div className="flex items-center justify-center gap-3">
-                  <span className="text-gold-primary font-medium tracking-widest text-sm">
+                  <span className="text-gold-primary font-medium tracking-widest text-xs md:text-sm">
                     ${parseFloat(product.price).toFixed(2)}
                   </span>
                 </div>
@@ -140,13 +149,24 @@ export default function ProductGrid() {
         </div>
 
         {/* VIEW ALL CTA */}
-        <div className="mt-20 text-center">
+        <div className="mt-12 md:mt-20 text-center">
           <Link to="/products" className="text-[10px] uppercase tracking-[0.3em] text-home-text border-b border-gold-primary/30 pb-1 hover:border-gold-primary hover:text-gold-primary transition-all">
             View Full Collection
           </Link>
         </div>
 
       </div>
+
+      {/* Hide Scrollbar Style for Webkit Browsers */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   );
 }

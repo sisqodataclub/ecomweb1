@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Link } from "react-router"; // <--- Imported Link for navigation
+import { Link } from "react-router"; 
 import { 
   PiList, 
   PiX, 
@@ -105,7 +105,8 @@ export default function Navbar() {
 
           {/* --- CENTER: Logo --- */}
           <div className="flex-1 flex justify-center">
-            <Link to="/" className="text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group">
+            {/* ✅ UPDATED: Added text-gold-primary and whitespace-nowrap */}
+            <Link to="/" className="text-gold-primary whitespace-nowrap text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group">
               Équiva Iconic
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-gold-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
@@ -151,7 +152,8 @@ export default function Navbar() {
             >
               {/* Header */}
               <div className="flex justify-between items-center p-6 border-b border-gold-primary/10">
-                <span className="text-xl font-serif font-bold tracking-tighter">AURUM</span>
+                {/* ✅ UPDATED: Added text-gold-primary here too */}
+                <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary"> Équiva Iconic</span>
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 -mr-2 text-3xl hover:text-gold-primary transition-colors active:rotate-90 duration-300"
@@ -168,11 +170,8 @@ export default function Navbar() {
                 <motion.div variants={containerVars} className="flex flex-col gap-5">
                     <MobileNavLink index="01" label="Collections" to="/products" onClick={() => setIsMobileMenuOpen(false)} />
                     <MobileNavLink index="02" label="About Us" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
-                    
-                    {/* UPDATE THESE TWO LINES: */}
                     <MobileNavLink index="03" label="Women" to="/products?gender=Women" onClick={() => setIsMobileMenuOpen(false)} />
                     <MobileNavLink index="04" label="Men" to="/products?gender=Men" onClick={() => setIsMobileMenuOpen(false)} />
-                    
                     <MobileNavLink index="05" label="T&C" onClick={() => setIsMobileMenuOpen(false)} />
                 </motion.div>
               </div>
@@ -180,7 +179,7 @@ export default function Navbar() {
               {/* Minimal Footer inside Menu */}
               <div className="px-8 py-6 border-t border-gold-primary/10 bg-home-text/5 flex justify-between items-center">
                   <div className="flex items-center gap-2 text-home-subtext text-xs">
-                    <PiEnvelopeSimple /> concierge@aurum.com
+                    <PiEnvelopeSimple /> concierge@ÉquivaIconic.com
                   </div>
                   <div className="flex gap-4 text-lg">
                       <PiInstagramLogo className="hover:text-gold-primary cursor-pointer" />
