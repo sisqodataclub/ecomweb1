@@ -6,109 +6,189 @@
   --color-home-text: #2d2410;      
   --color-home-subtext: #7c725a;
   --color-home-glow: #f4edd8;
-  --color-gold-primary: #947a25;   
+  --color-gold-primary: #947a25;
+  
+  /* 2. CHAMPAGNE */
+  --color-champagne-bg: #f9f5eb;
+  --color-champagne-text: #4a3b1d;
+  --color-champagne-subtext: #8b7d5e;
+  --color-champagne-glow: #fff9e6;
+  --color-champagne-primary: #a68b32;
+  
+  /* 3. PEARL */
+  --color-pearl-bg: #f4f4f4;
+  --color-pearl-text: #1a1a1a;
+  --color-pearl-subtext: #666666;
+  --color-pearl-glow: #ffffff;
+  --color-pearl-primary: #7a6a4d;
+  
+  /* 4. SAFFRON */
+  --color-saffron-bg: #fffcf2;
+  --color-saffron-text: #3d2b08;
+  --color-saffron-subtext: #7d6b46;
+  --color-saffron-glow: #ffedba;
+  --color-saffron-primary: #bf8f00;
+  
+  /* 5. LINEN */
+  --color-linen-bg: #ede9e1;
+  --color-linen-text: #2c2a26;
+  --color-linen-subtext: #6b665e;
+  --color-linen-glow: #f7f4ef;
+  --color-linen-primary: #8c764d;
+  
+  /* 6. ROYAL */
+  --color-royal-bg: #ffffff;
+  --color-royal-text: #450a0a;
+  --color-royal-subtext: #991b1b;
+  --color-royal-glow: #fee2e2;
+  --color-royal-primary: #d4af37;
+  
+  /* 7. PURE GOLD */
+  --color-pure-gold-bg: #e2d484b0;
+  --color-pure-gold-text: #261f0d;
+  --color-pure-gold-subtext: #5c4d26;
+  --color-pure-gold-glow: #fffbe6;
+  --color-pure-gold-primary: #ffffff;
+  
+  /* 8. ONYX - Dark with Gold/White */
+  --color-onyx-bg: #0a0a0a;
+  --color-onyx-text: #ffffff;
+  --color-onyx-subtext: #d4af37;
+  --color-onyx-glow: #1a1508;
+  --color-onyx-primary: #ffd700;
 }
 
-/* 2. ONYX - Dark Gold Theme */
-[data-theme-color='onyx'] {
-  --color-home-bg: #0f0f0f;        /* Deep black background */
-  --color-home-text: #f5f5f5;      /* Pure white text */
-  --color-home-subtext: #a8a8a8;   /* Light gray for subtext */
-  --color-home-glow: #2a240f;      /* Dark gold glow */
-  --color-gold-primary: #d4af37;   /* Rich, vibrant gold */
+/* Apply theme variables based on data attribute */
+[data-theme-color='default'] {
+  --color-home-bg: var(--color-home-bg);
+  --color-home-text: var(--color-home-text);
+  --color-home-subtext: var(--color-home-subtext);
+  --color-home-glow: var(--color-home-glow);
+  --color-gold-primary: var(--color-gold-primary);
 }
 
-/* 3. CHAMPAGNE */
 [data-theme-color='champagne'] {
-  --color-home-bg: #f9f5eb;
-  --color-home-text: #4a3b1d;
-  --color-home-subtext: #8b7d5e;
-  --color-home-glow: #fff9e6;
-  --color-gold-primary: #a68b32;
+  --color-home-bg: var(--color-champagne-bg);
+  --color-home-text: var(--color-champagne-text);
+  --color-home-subtext: var(--color-champagne-subtext);
+  --color-home-glow: var(--color-champagne-glow);
+  --color-gold-primary: var(--color-champagne-primary);
 }
 
-/* 4. PEARL */
 [data-theme-color='pearl'] {
-  --color-home-bg: #f4f4f4;
-  --color-home-text: #1a1a1a;
-  --color-home-subtext: #666666;
-  --color-home-glow: #ffffff;
-  --color-gold-primary: #7a6a4d;
+  --color-home-bg: var(--color-pearl-bg);
+  --color-home-text: var(--color-pearl-text);
+  --color-home-subtext: var(--color-pearl-subtext);
+  --color-home-glow: var(--color-pearl-glow);
+  --color-gold-primary: var(--color-pearl-primary);
 }
 
-/* 5. SAFFRON */
 [data-theme-color='saffron'] {
-  --color-home-bg: #fffcf2;
-  --color-home-text: #3d2b08;
-  --color-home-subtext: #7d6b46;
-  --color-home-glow: #ffedba;
-  --color-gold-primary: #bf8f00;
+  --color-home-bg: var(--color-saffron-bg);
+  --color-home-text: var(--color-saffron-text);
+  --color-home-subtext: var(--color-saffron-subtext);
+  --color-home-glow: var(--color-saffron-glow);
+  --color-gold-primary: var(--color-saffron-primary);
 }
 
-/* 6. LINEN */
 [data-theme-color='linen'] {
-  --color-home-bg: #ede9e1;
-  --color-home-text: #2c2a26;
-  --color-home-subtext: #6b665e;
-  --color-home-glow: #f7f4ef;
-  --color-gold-primary: #8c764d;
+  --color-home-bg: var(--color-linen-bg);
+  --color-home-text: var(--color-linen-text);
+  --color-home-subtext: var(--color-linen-subtext);
+  --color-home-glow: var(--color-linen-glow);
+  --color-gold-primary: var(--color-linen-primary);
 }
 
-/* 7. ROYAL (White, Gold, Red) */
 [data-theme-color='royal'] {
-  --color-home-bg: #ffffff;
-  --color-home-text: #450a0a;
-  --color-home-subtext: #991b1b;
-  --color-home-glow: #fee2e2;
-  --color-gold-primary: #d4af37;
+  --color-home-bg: var(--color-royal-bg);
+  --color-home-text: var(--color-royal-text);
+  --color-home-subtext: var(--color-royal-subtext);
+  --color-home-glow: var(--color-royal-glow);
+  --color-gold-primary: var(--color-royal-primary);
 }
 
-/* 8. PURE GOLD */
 [data-theme-color='pure-gold'] {
-  --color-home-bg: #e2d484b0; 
-  --color-home-text: #261f0d;
-  --color-home-subtext: #5c4d26;
-  --color-home-glow: #fffbe6;
-  --color-gold-primary: #ffffff;
+  --color-home-bg: var(--color-pure-gold-bg);
+  --color-home-text: var(--color-pure-gold-text);
+  --color-home-subtext: var(--color-pure-gold-subtext);
+  --color-home-glow: var(--color-pure-gold-glow);
+  --color-gold-primary: var(--color-pure-gold-primary);
 }
 
-/* DARK THEME UTILITIES */
 [data-theme-color='onyx'] {
-  --border-subtle: rgba(212, 175, 55, 0.15); /* Gold subtle borders */
-  --card-bg: rgba(30, 30, 30, 0.8); /* Dark card backgrounds */
-  --card-border: rgba(212, 175, 55, 0.2); /* Gold card borders */
+  --color-home-bg: var(--color-onyx-bg);
+  --color-home-text: var(--color-onyx-text);
+  --color-home-subtext: var(--color-onyx-subtext);
+  --color-home-glow: var(--color-onyx-glow);
+  --color-gold-primary: var(--color-onyx-primary);
+}
+
+/* DARK THEME UTILITIES for ONYX ONLY */
+[data-theme-color='onyx'] {
+  --border-subtle: rgba(255, 215, 0, 0.2); /* Gold subtle borders */
+  --card-bg: rgba(20, 20, 20, 0.9); /* Dark card backgrounds */
+  --card-border: rgba(255, 215, 0, 0.3); /* Gold card borders */
+}
+
+/* Add these important dark theme utilities */
+[data-theme-color='onyx'] .dark-theme-text {
+  color: var(--color-home-text) !important;
+}
+
+[data-theme-color='onyx'] .dark-theme-bg {
+  background-color: var(--color-home-bg) !important;
+}
+
+[data-theme-color='onyx'] .dark-theme-border {
+  border-color: var(--color-gold-primary) !important;
+}
+
+/* Remove all background colors that might conflict */
+[data-theme-color='onyx'] .bg-yellow-500,
+[data-theme-color='onyx'] .bg-yellow-400,
+[data-theme-color='onyx'] .bg-yellow-300,
+[data-theme-color='onyx'] .bg-yellow-200,
+[data-theme-color='onyx'] .bg-yellow-100,
+[data-theme-color='onyx'] .bg-amber-500,
+[data-theme-color='onyx'] .bg-amber-400,
+[data-theme-color='onyx'] .bg-amber-300 {
+  background-color: transparent !important;
 }
 
 /* Additional dark theme utilities */
 [data-theme-color='onyx'] .dark-card {
   background: var(--card-bg);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--card-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 [data-theme-color='onyx'] .dark-button {
-  background: linear-gradient(135deg, #2a240f 0%, #0f0f0f 100%);
-  border: 1px solid var(--color-gold-primary);
+  background: linear-gradient(135deg, rgba(26, 21, 8, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+  border: 1.5px solid var(--color-gold-primary);
   color: var(--color-gold-primary);
   transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 [data-theme-color='onyx'] .dark-button:hover {
-  background: linear-gradient(135deg, var(--color-gold-primary) 0%, #d4af37 100%);
+  background: linear-gradient(135deg, var(--color-gold-primary) 0%, #ffed86 100%);
   color: var(--color-home-bg);
   border-color: var(--color-gold-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
 }
 
 [data-theme-color='onyx'] .dark-overlay {
-  background: linear-gradient(to bottom, rgba(15, 15, 15, 0.9), rgba(15, 15, 15, 0.7));
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.85));
 }
 
 [data-theme-color='onyx'] .gold-glow {
-  box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.25);
 }
 
 [data-theme-color='onyx'] .subtle-glow {
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
 }
 
 /* BORDERS & BLENDING */
@@ -124,7 +204,7 @@
 
 /* Special for Onyx theme borders */
 [data-theme-color='onyx'] {
-  --border-subtle: rgba(212, 175, 55, 0.1);
+  --border-subtle: rgba(255, 215, 0, 0.15);
 }
 
 /* METALLIC SHIMMER ANIMATION */
@@ -148,21 +228,25 @@
   animation: shimmer 6s linear infinite;
 }
 
-/* Enhanced shimmer for dark theme */
+/* Enhanced shimmer for dark theme - simplified to avoid yellow boxes */
 [data-theme-color='onyx'] .text-shimmer {
   background: linear-gradient(
     90deg, 
-    #d4af37 0%, 
-    #ffed86 25%, 
-    #d4af37 50%, 
-    #ffed86 75%, 
-    #d4af37 100%
+    #ffd700 0%, 
+    #ffffff 25%, 
+    #ffd700 50%, 
+    #ffffff 75%, 
+    #ffd700 100%
   );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
 }
 
-/* Dark theme specific animations */
+/* Simplified dark theme specific animations */
 @keyframes gold-pulse {
-  0%, 100% { opacity: 0.6; }
+  0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
 }
 
@@ -171,8 +255,8 @@
 }
 
 @keyframes float-glow {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
-  50% { transform: translateY(-10px) scale(1.05); opacity: 0.8; }
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+  50% { transform: translateY(-10px) scale(1.05); opacity: 0.6; }
 }
 
 [data-theme-color='onyx'] .float-glow {
@@ -193,7 +277,7 @@
 /* Dark theme border variation */
 @utility dark-moroccan-border {
   border: 1px solid var(--color-gold-primary);
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
   mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
@@ -223,7 +307,7 @@
 }
 
 @utility dark-gold-gradient {
-  background: linear-gradient(135deg, #2a240f, #0f0f0f, #2a240f);
+  background: linear-gradient(135deg, #1a1508, #0a0a0a, #1a1508);
 }
 
 /* Text stroke effect for dark theme */
@@ -253,3 +337,57 @@
 [data-theme-color='onyx'] ::-webkit-scrollbar-thumb:hover {
   background: #ffed86;
 }
+
+/* Fix for any yellow box issues - add these overrides */
+[data-theme-color='onyx'] * {
+  background-color: transparent !important;
+}
+
+[data-theme-color='onyx'] body,
+[data-theme-color='onyx'] .bg-home-bg,
+[data-theme-color='onyx'] section {
+  background-color: var(--color-home-bg) !important;
+}
+
+[data-theme-color='onyx'] .text-home-text {
+  color: var(--color-home-text) !important;
+}
+
+[data-theme-color='onyx'] .text-home-subtext {
+  color: var(--color-home-subtext) !important;
+}
+
+[data-theme-color='onyx'] .border-gold-primary {
+  border-color: var(--color-gold-primary) !important;
+}
+
+@theme {
+    /* ... existing themes ... */
+  
+    /* 9. OBSIDIAN - High-Fashion Midnight & Antique Gold */
+    --color-obsidian-bg: #050505;        /* Deeper than Onyx */
+    --color-obsidian-text: #f4f4f4;      /* Off-white for luxury feel */
+    --color-obsidian-subtext: #b5a642;   /* Antique Gold (more muted) */
+    --color-obsidian-glow: #0a0a0a;
+    --color-obsidian-primary: #ffffff;   /* Primary actions are stark white */
+  }
+  
+  /* Mapping for Obsidian */
+  [data-theme-color='obsidian'] {
+    --color-home-bg: var(--color-obsidian-bg);
+    --color-home-text: var(--color-obsidian-text);
+    --color-home-subtext: var(--color-obsidian-subtext);
+    --color-home-glow: var(--color-obsidian-glow);
+    --color-gold-primary: var(--color-obsidian-subtext); /* Using the Antique Gold */
+  }
+  
+  /* Obsidian Specific Utilities */
+  [data-theme-color='obsidian'] .obsidian-glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(181, 166, 66, 0.2);
+  }
+  
+  [data-theme-color='obsidian'] .gold-accent {
+    color: #b5a642 !important;
+  }

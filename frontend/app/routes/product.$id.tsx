@@ -1,140 +1,78 @@
-import { useParams, Link } from "react-router"; // Use 'react-router-dom' if not using Remix/React Router v7
-import { useState } from "react";
+import { useParams, Link } from "react-router"; // Use 'react-router-dom' if needed
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiMinus, PiPlus, PiCaretDown, PiStarFour, PiArrowLeft } from "react-icons/pi";
 import Navbar from "~/components/home/Navbar";
 import GrainOverlay from "~/components/ui/GrainOverlay";
 
-// --- MOCK DATA (Your list + Enriched details for the product page) ---
-const PRODUCTS = [
-  { 
-    id: 1, 
-    name: "Oud Royale", 
-    category: "Unisex", 
-    gender: "unisex", 
-    price: 240, 
-    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&q=80&w=600",
-    // Added details:
-    tagline: "The Scent of Kings",
-    description: "A commanding blend of aged Agarwood and Royal Amber. Sourced from the deep forests of Assam and distilled in the heart of Marrakesh, this scent captures the essence of nobility.",
-    notes: { top: "Bergamot, Saffron", heart: "Wild Oud, Rose", base: "Amber, Musk" }
-  },
-  { 
-    id: 2, 
-    name: "Midnight Rose", 
-    category: "Floral", 
-    gender: "women", 
-    price: 195, 
-    image: "/a1.png",
-    hoverImage: "/a1.png",
-    // Added details:
-    tagline: "Velvet in the Dark",
-    description: "An intoxicating floral bouquet that blooms only at night. Damask Rose petals are harvested at dawn to preserve their dew-kissed freshness, layered over a smoky incense base.",
-    notes: { top: "Pink Pepper, Cassis", heart: "Damask Rose, Peony", base: "Incense, Vanilla" }
-  },
-  { 
-    id: 3, 
-    name: "Golden Saffron", 
-    category: "Spicy", 
-    gender: "men", 
-    price: 210, 
-    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600",
-    tagline: "The Red Gold",
-    description: "Hand-picked saffron threads from Taliouine, woven into a tapestry of warm spices and soft leather. A fragrance that radiates the heat of the desert sun.",
-    notes: { top: "Saffron, Cinnamon", heart: "Leather, Tobacco", base: "Oud, Sandalwood" }
-  },
-  { 
-    id: 4, 
-    name: "Atlas Cedar", 
-    category: "Woody", 
-    gender: "men", 
-    price: 180, 
-    image: "/a2.png",
-    hoverImage: "/a2.png",
-    tagline: "Strength of the Mountain",
-    description: "Inspired by the ancient cedar forests of the Middle Atlas. Crisp, clean, and grounding, this scent evokes the silence of the mountains.",
-    notes: { top: "Pine, Juniper", heart: "Atlas Cedar, Vetiver", base: "Oakmoss, Musk" }
-  },
-  { 
-    id: 5, 
-    name: "Desert Amber", 
-    category: "Oriental", 
-    gender: "women", 
-    price: 260, 
-    image: "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&q=80&w=600",
-    hoverImage: "https://images.unsplash.com/photo-1557827983-012eb6ea8dc1?auto=format&fit=crop&q=80&w=600",
-    tagline: "Liquid Sunset",
-    description: "Warm, resinous, and deeply comforting. A tribute to the golden dunes of Merzouga at dusk.",
-    notes: { top: "Mandarin, Honey", heart: "Amber, Labdanum", base: "Vanilla, Benzoin" }
-  },
-  { 
-    id: 6, 
-    name: "Vetiver Noir", 
-    category: "Earthy", 
-    gender: "men", 
-    price: 220, 
-    image: "/a3.png",
-    hoverImage: "/a3.png",
-    tagline: "Shadows & Earth",
-    description: "A dark, smoky interpretation of classic Vetiver. Rooty and raw, sharpened with black pepper and softened by night-blooming jasmine.",
-    notes: { top: "Black Pepper, Lime", heart: "Vetiver, Jasmine", base: "Patchouli, Smoke" }
-  },
-  { 
-    id: 7, 
-    name: "Cedar", 
-    category: "Woody", 
-    gender: "men", 
-    price: 80, 
-    image: "/a3.png",
-    hoverImage: "/a3.png",
-    tagline: "Pure Essence",
-    description: "A single-note exploration of Moroccan Cedarwood. Simple, elegant, and timeless.",
-    notes: { top: "Citrus", heart: "Cedarwood", base: "Dry Amber" }
-  },
-  { 
-    id: 8, 
-    name: "Amber", 
-    category: "Oriental", 
-    gender: "women", 
-    price: 60, 
-    image: "/a2.png",
-    hoverImage: "/a2.png",
-    tagline: "Golden Warmth",
-    description: "A pure amber distillation. Sweet, resinous, and enveloping.",
-    notes: { top: "Bergamot", heart: "Amber", base: "Vanilla" }
-  },
-  { 
-    id: 9, 
-    name: "Vetiver", 
-    category: "Earthy", 
-    gender: "men", 
-    price: 220, 
-    image: "/a1.png",
-    hoverImage: "/a1.png",
-    tagline: "Root of the Earth",
-    description: "Fresh, grassy, and clean. The scent of rain falling on dry earth.",
-    notes: { top: "Grapefruit", heart: "Vetiver", base: "Moss" }
-  },
-];
-
 export default function ProductDetail() {
   const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState("notes");
 
-  // Find product (parse ID as number)
-  const product = PRODUCTS.find((p) => p.id === Number(id));
+  // --- FETCH PRODUCT DATA ---
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const response = await fetch(`https://core.franciscodes.com/api/products/${id}/`, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "X-Tenant": "web"
+          }
+        });
 
-  // Handle "Product Not Found"
-  if (!product) {
+        if (!response.ok) throw new Error("Product not found");
+        
+        const data = await response.json();
+        setProduct(data);
+      } catch (error) {
+        console.error("❌ Product fetch error:", error);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (id) fetchProduct();
+  }, [id]);
+
+  // --- IMAGE HELPER ---
+  const getProductImage = (prod) => {
+    if (!prod) return "";
+    const primaryImage = prod.images?.find(img => img.is_primary);
+    if (primaryImage?.image_url) return primaryImage.image_url;
+    if (prod.images?.[0]?.image_url) return prod.images[0].image_url;
+    if (prod.image_url) return prod.image_url;
+    return "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&auto=format&fit=crop";
+  };
+
+  // --- LOADING STATE ---
+  if (loading) {
     return (
       <div className="min-h-screen bg-home-bg text-home-text flex items-center justify-center">
         <GrainOverlay />
         <div className="text-center">
+          <div className="w-12 h-12 border-t border-gold-primary rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gold-primary text-xs uppercase tracking-widest">Retrieving Artefact...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // --- ERROR STATE (Product Not Found) ---
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-home-bg text-home-text flex items-center justify-center relative">
+        <GrainOverlay />
+        <div className="text-center">
           <h1 className="text-4xl font-serif mb-4">Artefact Missing</h1>
-          <Link to="/products" className="text-gold-primary border-b border-gold-primary pb-1">Return to Collection</Link>
+          <p className="text-home-subtext mb-8">This scent has faded into history.</p>
+          <Link to="/products" className="text-gold-primary border-b border-gold-primary pb-1 uppercase tracking-widest text-xs">
+            Return to Collection
+          </Link>
         </div>
       </div>
     );
@@ -166,8 +104,11 @@ export default function ProductDetail() {
               >
                 {/* Main Image */}
                 <img 
-                  src={product.image} 
+                  src={getProductImage(product)} 
                   alt={product.name} 
+                  onError={(e) => {
+                    e.target.src = "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&auto=format&fit=crop";
+                  }}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 {/* Luxury inner border */}
@@ -185,19 +126,19 @@ export default function ProductDetail() {
             >
               {/* Tagline & Name */}
               <h2 className="text-gold-primary text-xs uppercase tracking-[0.3em] mb-4 font-bold">
-                {product.tagline || product.category}
+                {product.brand || product.category || "Extrait de Parfum"}
               </h2>
               <h1 className="text-5xl md:text-6xl font-serif mb-6 leading-tight">
                 {product.name}
               </h1>
               <p className="text-2xl text-white/90 font-light mb-8">
-                ${product.price}
+                ${Number(product.price).toFixed(2)}
               </p>
 
               <div className="h-[1px] w-12 bg-gold-primary mb-8" />
 
               <p className="text-home-subtext leading-relaxed font-light text-sm md:text-base mb-10">
-                {product.description || `A luxurious ${product.category.toLowerCase()} fragrance sourced from the finest ingredients.`}
+                {product.description || `A luxurious ${product.category?.toLowerCase() || 'crafted'} fragrance sourced from the finest ingredients.`}
               </p>
 
               {/* CONTROLS */}
@@ -227,17 +168,18 @@ export default function ProductDetail() {
                   onClick={() => setActiveAccordion(activeAccordion === "notes" ? "" : "notes")}
                 >
                   <div className="grid grid-cols-3 gap-4 text-xs uppercase tracking-widest text-home-subtext py-2">
-                    <div>
-                      <span className="block text-gold-primary mb-1 font-bold">Top</span>
-                      {product.notes?.top || "---"}
-                    </div>
-                    <div>
-                      <span className="block text-gold-primary mb-1 font-bold">Heart</span>
-                      {product.notes?.heart || "---"}
-                    </div>
-                    <div>
-                      <span className="block text-gold-primary mb-1 font-bold">Base</span>
-                      {product.notes?.base || "---"}
+                    {/* Since API usually returns a string or JSON, we display safely */}
+                    <div className="col-span-3 leading-relaxed">
+                        {/* If you have specific fields in DB for notes, replace this logic */}
+                        {typeof product.notes === 'object' ? (
+                            <>
+                                <p><span className="text-gold-primary">Top:</span> {product.notes.top || "---"}</p>
+                                <p><span className="text-gold-primary">Heart:</span> {product.notes.heart || "---"}</p>
+                                <p><span className="text-gold-primary">Base:</span> {product.notes.base || "---"}</p>
+                            </>
+                        ) : (
+                           product.description_short || "Notes details not available for this vintage."
+                        )}
                     </div>
                   </div>
                 </AccordionItem>
@@ -248,7 +190,7 @@ export default function ProductDetail() {
                   onClick={() => setActiveAccordion(activeAccordion === "ritual" ? "" : "ritual")}
                 >
                   <p className="text-sm font-light text-home-subtext leading-relaxed">
-                    Apply to pulse points—wrists, neck, and behind the ears. Do not rub; allow the heat of your body to awaken the oud oils naturally over time.
+                    Apply to pulse points—wrists, neck, and behind the ears. Do not rub; allow the heat of your body to awaken the oils naturally over time.
                   </p>
                 </AccordionItem>
 
@@ -267,39 +209,6 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-
-      {/* RECOMMENDATIONS SECTION */}
-      <section className="border-t border-white/5 py-24 bg-black/20">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <PiStarFour className="text-2xl text-gold-primary mx-auto mb-4 animate-spin-slow" />
-            <h3 className="text-3xl font-serif">You May Also Desire</h3>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Filter out current product, show 3 random others */}
-            {PRODUCTS.filter(p => p.id !== Number(id)).slice(0, 3).map(rec => (
-               <Link to={`/product/${rec.id}`} key={rec.id} className="group block cursor-pointer">
-                 <div className="aspect-[4/5] bg-white/5 overflow-hidden mb-6 relative">
-                   <img 
-                      src={rec.image} 
-                      alt={rec.name} 
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
-                    />
-                   {/* Frame on Hover */}
-                   <div className="absolute inset-3 border border-gold-primary/0 group-hover:border-gold-primary/20 transition-all duration-500" />
-                 </div>
-                 <div className="text-center">
-                   <h4 className="font-serif text-xl mb-2 group-hover:text-gold-primary transition-colors">{rec.name}</h4>
-                   <p className="text-xs uppercase tracking-widest text-home-subtext mb-2">{rec.category}</p>
-                   <p className="text-sm text-gold-primary">${rec.price}</p>
-                 </div>
-               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 }

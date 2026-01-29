@@ -106,7 +106,7 @@ export default function Navbar() {
           {/* --- CENTER: Logo --- */}
           <div className="flex-1 flex justify-center">
             <Link to="/" className="text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group">
-              AURUM
+              Équiva Iconic
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-gold-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
           </div>
