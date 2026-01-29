@@ -14,7 +14,7 @@ export default function ProductGrid() {
           method: "GET",
           headers: {
             "Accept": "application/json",
-            "X-Tenant": "web.franciscodes.com"
+            "X-Tenant": "web"
           }
         });
 
