@@ -5,7 +5,7 @@ export const API_BASE = import.meta.env.VITE_API_URL || "https://core.franciscod
  * Helper to construct full image URLs.
  */
 export const getImageUrl = (path) => {
-  if (!path) return "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=600&auto=format&fit=crop"; 
+  if (!path) return "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=600&auto=format&fit=crop";
   if (path.startsWith("http")) return path;
   return `${API_BASE}${path}`;
 };
@@ -40,27 +40,27 @@ export async function getProducts() {
 
     // ✅ FIXED: Map data to match what your ProductGrid expects
     return rawResults.map(item => {
-        // Replicating your "getProductImage" logic here so it's reusable
-        let mainImage = null;
-        const primaryImgObj = item.images?.find(img => img.is_primary);
-        
-        if (primaryImgObj?.image_url) mainImage = primaryImgObj.image_url;
-        else if (item.images?.[0]?.image_url) mainImage = item.images[0].image_url;
-        else if (item.image_url) mainImage = item.image_url;
+      // Replicating your "getProductImage" logic here so it's reusable
+      let mainImage = null;
+      const primaryImgObj = item.images?.find(img => img.is_primary);
 
-        return {
-            id: item.id,
-            name: item.name,
-            // Use category for filtering (Men/Women/Unisex)
-            category: item.category || "Unisex", 
-            price: item.price,
-            // Pre-process the image URL here
-            image: getImageUrl(mainImage), 
-            // Pass raw images array if needed for galleries
-            images: item.images || [], 
-            sku: item.sku,
-            description: item.description
-        };
+      if (primaryImgObj?.image_url) mainImage = primaryImgObj.image_url;
+      else if (item.images?.[0]?.image_url) mainImage = item.images[0].image_url;
+      else if (item.image_url) mainImage = item.image_url;
+
+      return {
+        id: item.id,
+        name: item.name,
+        // Use category for filtering (Men/Women/Unisex)
+        category: item.category || "Unisex",
+        price: item.price,
+        // Pre-process the image URL here
+        image: getImageUrl(mainImage),
+        // Pass raw images array if needed for galleries
+        images: item.images || [],
+        sku: item.sku,
+        description: item.description
+      };
     });
 
   } catch (error) {
@@ -132,7 +132,8 @@ export async function createCheckoutSession(cartItems, userEmail, isGift = false
         items: cartItems.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,
-          variant: item.variant 
+          // Only send variant if it exists and is meaningful
+          variant: item.variant && item.variant !== "Extrait de Parfum" ? item.variant : null
         })),
         customer_email: userEmail || "guest@example.com",
         is_gift: isGift,
@@ -144,7 +145,7 @@ export async function createCheckoutSession(cartItems, userEmail, isGift = false
       throw new Error(error.error || "Checkout failed");
     }
 
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Payment Error:", error);
     throw error;

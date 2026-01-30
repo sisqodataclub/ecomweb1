@@ -18,6 +18,7 @@ export default function Cart() {
   const { cartItems, updateQuantity, removeItem } = useCart();
   const [isGift, setIsGift] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // --- LOGIC ---
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -26,6 +27,7 @@ export default function Cart() {
 
   const handleCheckout = async () => {
     setLoading(true);
+    setError(null);
     try {
       // 1. Call your new backend endpoint
       const { checkout_url } = await createCheckoutSession(
@@ -35,9 +37,14 @@ export default function Cart() {
       );
 
       // 2. Redirect to Stripe
-      window.location.href = checkout_url;
-    } catch (error) {
-      alert("Checkout failed: " + error.message);
+      if (checkout_url) {
+        window.location.href = checkout_url;
+      } else {
+        throw new Error("No checkout URL returned from server.");
+      }
+    } catch (err: any) {
+      console.error("Checkout detail:", err);
+      setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -144,6 +151,16 @@ export default function Cart() {
                     <span className="text-sm uppercase tracking-widest font-bold">Total</span>
                     <span className="text-3xl font-serif text-gold-primary">${total.toFixed(2)}</span>
                   </div>
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="mb-4 p-3 bg-red-950/20 border border-red-900/50 text-red-200 text-[10px] uppercase tracking-wider text-center"
+                    >
+                      {error}
+                    </motion.div>
+                  )}
 
                   <button
                     onClick={handleCheckout}
