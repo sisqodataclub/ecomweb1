@@ -2,11 +2,12 @@
 import "./app.css";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { useEffect } from "react";
+import { CartProvider } from "./contexts/CartContext";
 
 export default function App() {
-  
+
   // REPLACE THIS WITH YOUR ACTUAL ID FROM GOOGLE
-  const GA_MEASUREMENT_ID = "G-XXXXXXXXXX"; 
+  const GA_MEASUREMENT_ID = "G-XXXXXXXXXX";
 
   useEffect(() => {
     const handleTrackingClick = (e: any) => {
@@ -56,7 +57,9 @@ export default function App() {
 
       </head>
       <body className="bg-[#fdfcf8] text-[#1a1a1a]" suppressHydrationWarning>
-        <Outlet />
+        <CartProvider>
+          <Outlet />
+        </CartProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

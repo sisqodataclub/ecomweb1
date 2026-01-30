@@ -1,15 +1,12 @@
 // 1. DEFINE THE BASE URL
-// Ensure this matches your backend's public URL
-export const API_BASE = "https://api.franciscodes.com"; 
+export const API_BASE = import.meta.env.VITE_API_URL || "https://core.franciscodes.com";
 
 /**
  * Helper to construct full image URLs.
- * If the path is already a full URL (starts with http), return it.
- * Otherwise, prepend the API_BASE.
  */
 export const getImageUrl = (path) => {
-  if (!path) return "/a1.png"; // Default fallback image if null
-  if (path.startsWith("http")) return path; 
+  if (!path) return "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=600&auto=format&fit=crop"; 
+  if (path.startsWith("http")) return path;
   return `${API_BASE}${path}`;
 };
 
@@ -19,82 +16,88 @@ export const getImageUrl = (path) => {
  */
 export async function getProducts() {
   try {
-    // Note: Verify your backend URL is exactly /api/products/
-    const res = await fetch(`${API_BASE}/api/products/`); 
-    
+    const res = await fetch(`${API_BASE}/api/products/`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "X-Tenant": "web" // ✅ FIXED: Added Tenant Header
+      }
+    });
+
     if (!res.ok) {
       throw new Error(`Failed to fetch products: ${res.status}`);
     }
-    
+
     const data = await res.json();
-    
-    // Map backend data to frontend structure
-    return data.map(item => ({
-      id: item.id,
-      name: item.name, 
-      category: item.category || "Unisex",
-      gender: item.gender || "unisex",
-      price: item.price,
-      // Handle nested image objects or simple strings
-      image: getImageUrl(item.image?.url || item.image), 
-      hoverImage: getImageUrl(item.hoverImage?.url || item.hoverImage),
-    }));
+
+    // ✅ FIXED: Handle Django Pagination vs List
+    let rawResults = [];
+    if (data.results && Array.isArray(data.results)) {
+      rawResults = data.results;
+    } else if (Array.isArray(data)) {
+      rawResults = data;
+    }
+
+    // ✅ FIXED: Map data to match what your ProductGrid expects
+    return rawResults.map(item => {
+        // Replicating your "getProductImage" logic here so it's reusable
+        let mainImage = null;
+        const primaryImgObj = item.images?.find(img => img.is_primary);
+        
+        if (primaryImgObj?.image_url) mainImage = primaryImgObj.image_url;
+        else if (item.images?.[0]?.image_url) mainImage = item.images[0].image_url;
+        else if (item.image_url) mainImage = item.image_url;
+
+        return {
+            id: item.id,
+            name: item.name,
+            // Use category for filtering (Men/Women/Unisex)
+            category: item.category || "Unisex", 
+            price: item.price,
+            // Pre-process the image URL here
+            image: getImageUrl(mainImage), 
+            // Pass raw images array if needed for galleries
+            images: item.images || [], 
+            sku: item.sku,
+            description: item.description
+        };
+    });
 
   } catch (error) {
     console.error("API Error (getProducts):", error);
-    return []; 
+    return [];
   }
 }
 
 /**
  * FETCH BOOKINGS (Private Access)
- * Requires Authentication Token.
  */
 export async function getBookings() {
   try {
-    // Correct URL for the API endpoint (NOT dashboard-admin)
-    const url = `${API_BASE}/api/booking/`; 
-
-    // Retrieve token safely
+    const url = `${API_BASE}/api/booking/`;
     const token = typeof window !== 'undefined' ? localStorage.getItem("authToken") : null;
 
     const res = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // Authorization is required if your view uses IsAuthenticated
         "Authorization": token ? `Bearer ${token}` : "",
+        "X-Tenant": "web"
       },
     });
 
-    // Check for HTML response (Login page redirect issue)
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      const text = await res.text();
-      console.error("Server returned HTML instead of JSON:", text.slice(0, 500));
-      throw new Error("Server returned an HTML page. Please check your URL or Login status.");
-    }
+    if (res.status === 401) throw new Error("Unauthorized: Please log in.");
+    if (!res.ok) throw new Error(`API Error: ${res.status}`);
 
-    if (res.status === 401) {
-      throw new Error("Unauthorized: Please log in.");
-    }
-
-    if (!res.ok) {
-      throw new Error(`API Error: ${res.status}`);
-    }
-
-    const data = await res.json();
-    return data;
-
+    return await res.json();
   } catch (error) {
     console.error("Failed to fetch bookings:", error);
-    return []; 
+    return [];
   }
 }
 
 /**
- * FETCH BLOGS (Public Read Access)
- * Uses IsAuthenticatedOrReadOnly on backend.
+ * FETCH BLOGS
  */
 export async function getBlogs() {
   try {
@@ -102,21 +105,48 @@ export async function getBlogs() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // No Authorization header needed for GET requests here
+        "X-Tenant": "web"
       },
     });
 
-    if (!res.ok) {
-      throw new Error(`Error fetching blogs: ${res.status}`);
-    }
-
-    const data = await res.json();
-    return data;
-
+    if (!res.ok) throw new Error(`Error fetching blogs: ${res.status}`);
+    return await res.json();
   } catch (error) {
     console.error("Failed to fetch blogs:", error);
     return [];
   }
 }
 
+/**
+ * CREATE CHECKOUT SESSION
+ */
+export async function createCheckoutSession(cartItems, userEmail, isGift = false) {
+  try {
+    const response = await fetch(`${API_BASE}/api/payments/bookings/create_checkout/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Tenant": "web",
+      },
+      body: JSON.stringify({
+        items: cartItems.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          variant: item.variant 
+        })),
+        customer_email: userEmail || "guest@example.com",
+        is_gift: isGift,
+      }),
+    });
 
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Checkout failed");
+    }
+
+    return await response.json(); 
+  } catch (error) {
+    console.error("Payment Error:", error);
+    throw error;
+  }
+}

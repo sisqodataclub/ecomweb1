@@ -1,57 +1,46 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  PiTrash, 
-  PiMinus, 
-  PiPlus, 
-  PiArrowRight, 
+import {
+  PiTrash,
+  PiMinus,
+  PiPlus,
+  PiArrowRight,
   PiShoppingBag,
   PiGift
 } from "react-icons/pi";
 import { Link } from "react-router"; // Assuming React Router v7
 import Navbar from "~/components/home/Navbar";
+import { useCart } from "~/contexts/CartContext";
 
-// --- MOCK INITIAL CART DATA ---
-const INITIAL_CART = [
-  { 
-    id: 1, 
-    name: "Oud Royale", 
-    variant: "50ml / Extrait de Parfum", 
-    price: 240, 
-    quantity: 1, 
-    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=300" 
-  },
-  { 
-    id: 2, 
-    name: "Midnight Rose", 
-    variant: "100ml / Eau de Parfum", 
-    price: 195, 
-    quantity: 2, 
-    image: "https://images.unsplash.com/photo-1547881338-64674c07698b?auto=format&fit=crop&q=80&w=300" 
-  }
-];
+import { createCheckoutSession } from "~/lib/api";
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState(INITIAL_CART);
+  const { cartItems, updateQuantity, removeItem } = useCart();
   const [isGift, setIsGift] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // --- LOGIC ---
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = subtotal > 250 ? 0 : 25; // Complimentary over $250
   const total = subtotal + shipping;
 
-  const updateQuantity = (id, delta) => {
-    setCartItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
-      }
-      return item;
-    }));
-  };
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      // 1. Call your new backend endpoint
+      const { checkout_url } = await createCheckoutSession(
+        cartItems,
+        "user@example.com", // TODO: Get from AuthContext or user input
+        isGift
+      );
 
-  const removeItem = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+      // 2. Redirect to Stripe
+      window.location.href = checkout_url;
+    } catch (error) {
+      alert("Checkout failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,10 +48,10 @@ export default function Cart() {
       <Navbar />
 
       <div className="pt-[160px] pb-20 container mx-auto px-6 max-w-6xl">
-        
+
         {/* HEADER */}
         <header className="mb-12 md:mb-20 text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-serif mb-4"
@@ -78,24 +67,24 @@ export default function Cart() {
             <EmptyCart key="empty" />
           ) : (
             // --- POPULATED CART ---
-            <motion.div 
+            <motion.div
               key="cart"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24"
             >
-              
+
               {/* LEFT COLUMN: ITEMS */}
               <div className="lg:col-span-2 space-y-8">
                 <div className="border-t border-gold-primary/10">
                   <AnimatePresence>
                     {cartItems.map((item) => (
-                      <CartItem 
-                        key={item.id} 
-                        item={item} 
-                        onUpdate={updateQuantity} 
-                        onRemove={removeItem} 
+                      <CartItem
+                        key={item.id}
+                        item={item}
+                        onUpdate={updateQuantity}
+                        onRemove={removeItem}
                       />
                     ))}
                   </AnimatePresence>
@@ -109,7 +98,7 @@ export default function Cart() {
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-1">
                       <h3 className="font-serif text-lg">Gift Wrapping</h3>
-                      <button 
+                      <button
                         onClick={() => setIsGift(!isGift)}
                         className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${isGift ? 'bg-gold-primary' : 'bg-home-text/20'}`}
                       >
@@ -129,7 +118,7 @@ export default function Cart() {
                   <h3 className="text-xl font-serif mb-8 flex items-center gap-2">
                     Summary
                   </h3>
-                  
+
                   <div className="space-y-4 text-xs uppercase tracking-widest text-home-subtext mb-8 border-b border-gold-primary/10 pb-8">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
@@ -156,10 +145,14 @@ export default function Cart() {
                     <span className="text-3xl font-serif text-gold-primary">${total.toFixed(2)}</span>
                   </div>
 
-                  <button className="w-full py-5 bg-gold-primary text-home-bg text-xs uppercase tracking-[0.25em] font-bold hover:brightness-110 transition-all mb-4">
-                    Proceed to Checkout
+                  <button
+                    onClick={handleCheckout}
+                    disabled={loading}
+                    className="w-full py-5 bg-gold-primary text-home-bg text-xs uppercase tracking-[0.25em] font-bold hover:brightness-110 transition-all mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Processing..." : "Proceed to Checkout"}
                   </button>
-                  
+
                   <div className="text-center">
                     <p className="text-[10px] text-home-subtext/60 uppercase tracking-widest">
                       Secure Checkout • Global Delivery
@@ -179,7 +172,7 @@ export default function Cart() {
 // --- SUB-COMPONENT: EMPTY STATE ---
 function EmptyCart() {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -194,7 +187,7 @@ function EmptyCart() {
       <p className="text-home-subtext text-sm max-w-md text-center leading-relaxed mb-10">
         Explore our olfactory library and discover the scent that speaks to your soul.
       </p>
-      <Link 
+      <Link
         to="/products"
         className="group relative px-10 py-4 bg-transparent border border-gold-primary/40 text-home-text text-[10px] uppercase tracking-[0.3em] font-black hover:border-gold-primary transition-all duration-500 overflow-hidden"
       >
@@ -210,7 +203,7 @@ function EmptyCart() {
 // --- SUB-COMPONENT: CART ITEM ROW ---
 function CartItem({ item, onUpdate, onRemove }) {
   return (
-    <motion.div 
+    <motion.div
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -220,10 +213,10 @@ function CartItem({ item, onUpdate, onRemove }) {
     >
       {/* Image: Fixed width on mobile (w-24) to prevent big picture */}
       <div className="w-24 md:w-32 aspect-[3/4] md:aspect-[4/5] bg-home-text/5 overflow-hidden relative shrink-0">
-        <img 
-          src={item.image} 
-          alt={item.name} 
-          className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-700" 
+        <img
+          src={item.image}
+          alt={item.name}
+          className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-700"
         />
       </div>
 
@@ -240,7 +233,7 @@ function CartItem({ item, onUpdate, onRemove }) {
         <div className="flex justify-between items-center md:items-end">
           {/* Quantity Controls - Compact on mobile */}
           <div className="flex items-center border border-home-text/10 hover:border-gold-primary/50 transition-colors w-24 md:w-32 h-8 md:h-10">
-            <button 
+            <button
               onClick={() => onUpdate(item.id, -1)}
               className="p-2 md:p-3 hover:text-gold-primary transition-colors disabled:opacity-30 flex-1 flex justify-center"
               disabled={item.quantity <= 1}
@@ -248,7 +241,7 @@ function CartItem({ item, onUpdate, onRemove }) {
               <PiMinus className="text-[10px] md:text-xs" />
             </button>
             <span className="flex-1 text-center text-xs font-bold">{item.quantity}</span>
-            <button 
+            <button
               onClick={() => onUpdate(item.id, 1)}
               className="p-2 md:p-3 hover:text-gold-primary transition-colors flex-1 flex justify-center"
             >
@@ -257,7 +250,7 @@ function CartItem({ item, onUpdate, onRemove }) {
           </div>
 
           {/* Remove Button */}
-          <button 
+          <button
             onClick={() => onRemove(item.id)}
             className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-home-subtext hover:text-red-900 transition-colors opacity-60 hover:opacity-100"
           >

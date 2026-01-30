@@ -1,16 +1,19 @@
 import { useParams, Link } from "react-router"; // Use 'react-router-dom' if needed
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PiMinus, PiPlus, PiCaretDown, PiStarFour, PiArrowLeft } from "react-icons/pi";
+import { PiMinus, PiPlus, PiCaretDown, PiStarFour, PiArrowLeft, PiCheck } from "react-icons/pi";
 import Navbar from "~/components/home/Navbar";
 import GrainOverlay from "~/components/ui/GrainOverlay";
+import { useCart } from "~/contexts/CartContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState("notes");
+  const [addedToCart, setAddedToCart] = useState(false);
 
   // --- FETCH PRODUCT DATA ---
   useEffect(() => {
@@ -25,7 +28,7 @@ export default function ProductDetail() {
         });
 
         if (!response.ok) throw new Error("Product not found");
-        
+
         const data = await response.json();
         setProduct(data);
       } catch (error) {
@@ -85,27 +88,27 @@ export default function ProductDetail() {
 
       {/* MAIN LAYOUT: Split Screen */}
       <div className="pt-32 pb-20 container mx-auto px-6">
-        
+
         {/* Back Link */}
         <Link to="/products" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-home-subtext hover:text-gold-primary mb-12 transition-colors">
           <PiArrowLeft /> Back to Collection
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
-          
+
           {/* LEFT: IMAGE (Sticky) */}
           <div className="lg:col-span-7 relative">
             <div className="sticky top-32">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, ease: "easeOut" }}
                 className="aspect-[4/5] w-full bg-home-text/5 relative overflow-hidden"
               >
                 {/* Main Image */}
-                <img 
-                  src={getProductImage(product)} 
-                  alt={product.name} 
+                <img
+                  src={getProductImage(product)}
+                  alt={product.name}
                   onError={(e) => {
                     e.target.src = "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&auto=format&fit=crop";
                   }}
@@ -155,38 +158,69 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Add to Cart */}
-                <button className="flex-1 bg-gold-primary text-home-bg h-14 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white transition-colors duration-500">
-                  Add to Cart
+                <button
+                  onClick={() => {
+                    if (product) {
+                      addToCart(product, quantity);
+                      setAddedToCart(true);
+                      setTimeout(() => setAddedToCart(false), 2000);
+                    }
+                  }}
+                  className="flex-1 bg-gold-primary text-home-bg h-14 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white transition-all duration-500 flex items-center justify-center gap-2"
+                >
+                  <AnimatePresence mode="wait">
+                    {addedToCart ? (
+                      <motion.span
+                        key="added"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="flex items-center gap-2"
+                      >
+                        <PiCheck className="text-lg" />
+                        Added to Cart
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="add"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Add to Cart
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </button>
               </div>
 
               {/* ACCORDIONS */}
               <div className="border-t border-white/10">
-                <AccordionItem 
-                  title="Olfactory Notes" 
-                  isOpen={activeAccordion === "notes"} 
+                <AccordionItem
+                  title="Olfactory Notes"
+                  isOpen={activeAccordion === "notes"}
                   onClick={() => setActiveAccordion(activeAccordion === "notes" ? "" : "notes")}
                 >
                   <div className="grid grid-cols-3 gap-4 text-xs uppercase tracking-widest text-home-subtext py-2">
                     {/* Since API usually returns a string or JSON, we display safely */}
                     <div className="col-span-3 leading-relaxed">
-                        {/* If you have specific fields in DB for notes, replace this logic */}
-                        {typeof product.notes === 'object' ? (
-                            <>
-                                <p><span className="text-gold-primary">Top:</span> {product.notes.top || "---"}</p>
-                                <p><span className="text-gold-primary">Heart:</span> {product.notes.heart || "---"}</p>
-                                <p><span className="text-gold-primary">Base:</span> {product.notes.base || "---"}</p>
-                            </>
-                        ) : (
-                           product.description_short || "Notes details not available for this vintage."
-                        )}
+                      {/* If you have specific fields in DB for notes, replace this logic */}
+                      {typeof product.notes === 'object' ? (
+                        <>
+                          <p><span className="text-gold-primary">Top:</span> {product.notes.top || "---"}</p>
+                          <p><span className="text-gold-primary">Heart:</span> {product.notes.heart || "---"}</p>
+                          <p><span className="text-gold-primary">Base:</span> {product.notes.base || "---"}</p>
+                        </>
+                      ) : (
+                        product.description_short || "Notes details not available for this vintage."
+                      )}
                     </div>
                   </div>
                 </AccordionItem>
 
-                <AccordionItem 
-                  title="The Ritual" 
-                  isOpen={activeAccordion === "ritual"} 
+                <AccordionItem
+                  title="The Ritual"
+                  isOpen={activeAccordion === "ritual"}
                   onClick={() => setActiveAccordion(activeAccordion === "ritual" ? "" : "ritual")}
                 >
                   <p className="text-sm font-light text-home-subtext leading-relaxed">
@@ -194,9 +228,9 @@ export default function ProductDetail() {
                   </p>
                 </AccordionItem>
 
-                <AccordionItem 
-                  title="Shipping & Returns" 
-                  isOpen={activeAccordion === "shipping"} 
+                <AccordionItem
+                  title="Shipping & Returns"
+                  isOpen={activeAccordion === "shipping"}
                   onClick={() => setActiveAccordion(activeAccordion === "shipping" ? "" : "shipping")}
                 >
                   <p className="text-sm font-light text-home-subtext leading-relaxed">
@@ -217,14 +251,14 @@ export default function ProductDetail() {
 function AccordionItem({ title, isOpen, onClick, children }) {
   return (
     <div className="border-b border-white/10">
-      <button 
+      <button
         onClick={onClick}
         className="w-full flex justify-between items-center py-6 text-left group"
       >
         <span className="text-xs uppercase tracking-[0.2em] font-bold text-white group-hover:text-gold-primary transition-colors">
           {title}
         </span>
-        <motion.span 
+        <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
           className="text-gold-primary"

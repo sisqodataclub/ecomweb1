@@ -1,6 +1,6 @@
-import { useState, useMemo, useTransition, useEffect } from "react"; 
-import { useSearchParams } from "react-router"; 
-import { Link } from "react-router"; 
+import { useState, useMemo, useTransition, useEffect } from "react";
+import { useSearchParams } from "react-router";
+import { Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiSlidersHorizontal, PiX, PiCheck, PiCaretDown, PiMinus, PiPlus } from "react-icons/pi";
 import Navbar from "~/components/home/Navbar";
@@ -14,8 +14,8 @@ const FILTERS = {
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState([]); 
-  const [isLoading, setIsLoading] = useState(true); 
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Filter States
   // We call it 'activeCategory' now instead of 'activeGender' for clarity
@@ -23,7 +23,7 @@ export default function Products() {
   const [activePrice, setActivePrice] = useState("All");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [visibleCount, setVisibleCount] = useState(6); 
+  const [visibleCount, setVisibleCount] = useState(6);
 
   // --- 1. FETCH DATA FROM API ---
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function Products() {
         });
 
         const data = await response.json();
-        
+
         let results = [];
         if (data.results && Array.isArray(data.results)) {
           results = data.results;
@@ -58,8 +58,14 @@ export default function Products() {
 
   // --- 2. SYNC URL PARAMS ---
   useEffect(() => {
+    // Check for both 'gender' and 'category' params
+    const genderFromUrl = searchParams.get("gender");
     const categoryFromUrl = searchParams.get("category");
-    if (categoryFromUrl) {
+
+    // Prioritize gender param (from navbar links), then category
+    if (genderFromUrl) {
+      setActiveCategory(genderFromUrl);
+    } else if (categoryFromUrl) {
       setActiveCategory(categoryFromUrl);
     } else {
       setActiveCategory("All");
@@ -70,14 +76,14 @@ export default function Products() {
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       // 1. Normalize Database Category
-      const productCat = product.category ? product.category.toLowerCase() : "unisex"; 
-      
+      const productCat = product.category ? product.category.toLowerCase() : "unisex";
+
       // 2. Normalize Selected Filter
       const selectedCat = activeCategory.toLowerCase();
 
       // 3. Match
       const categoryMatch = activeCategory === "All" || productCat === selectedCat;
-      
+
       // 4. Price Logic
       let priceMatch = true;
       const price = parseFloat(product.price);
@@ -94,11 +100,16 @@ export default function Products() {
     startTransition(() => {
       setActiveCategory(c);
       setVisibleCount(6);
-      if (c === "All") {
-        searchParams.delete("category");
-      } else {
+
+      // Clear both gender and category params
+      searchParams.delete("gender");
+      searchParams.delete("category");
+
+      // Set the new filter if not "All"
+      if (c !== "All") {
         searchParams.set("category", c);
       }
+
       setSearchParams(searchParams);
     });
   };
@@ -119,17 +130,17 @@ export default function Products() {
       <Navbar />
 
       <div className="pt-[100px] md:pt-[120px]">
-        
+
         {/* HEADER */}
         <header className="container mx-auto px-6 py-12 md:py-16 text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             className="text-5xl md:text-7xl font-serif mb-6"
           >
             The <span className="text-shimmer italic">Collection</span>
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -142,16 +153,15 @@ export default function Products() {
         {/* FILTER BAR */}
         <div className="sticky top-[70px] md:top-[80px] z-40 bg-home-bg/85 backdrop-blur-xl border-y border-gold-primary/10 transition-all duration-300">
           <div className="container mx-auto px-6 h-12 flex items-center justify-between">
-            
+
             {/* Desktop Category Filters */}
             <div className="hidden md:flex gap-8">
               {FILTERS.category.map((c) => (
                 <button
                   key={c}
                   onClick={() => handleCategoryChange(c)}
-                  className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${
-                    activeCategory === c ? "text-gold-primary font-bold" : "text-home-subtext hover:text-home-text"
-                  } ${isPending ? "opacity-50" : "opacity-100"}`}
+                  className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${activeCategory === c ? "text-gold-primary font-bold" : "text-home-subtext hover:text-home-text"
+                    } ${isPending ? "opacity-50" : "opacity-100"}`}
                 >
                   {c}
                 </button>
@@ -167,9 +177,8 @@ export default function Products() {
                       <button
                         key={p}
                         onClick={() => handlePriceChange(p)}
-                        className={`text-left px-4 py-3 text-[10px] uppercase tracking-widest hover:bg-gold-primary/10 ${
-                          activePrice === p ? "text-gold-primary" : "text-home-text"
-                        }`}
+                        className={`text-left px-4 py-3 text-[10px] uppercase tracking-widest hover:bg-gold-primary/10 ${activePrice === p ? "text-gold-primary" : "text-home-text"
+                          }`}
                       >
                         {p}
                       </button>
@@ -178,7 +187,7 @@ export default function Products() {
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={() => setIsMobileFilterOpen(true)}
                 className="md:hidden flex items-center gap-2 text-[10px] uppercase tracking-widest border border-gold-primary/30 px-3 py-1.5 hover:bg-gold-primary hover:text-home-bg transition-colors"
               >
@@ -204,8 +213,8 @@ export default function Products() {
                     <ProductCard key={product.id} product={product} />
                   ))
                 ) : (
-                  <motion.div 
-                    initial={{ opacity: 0 }} 
+                  <motion.div
+                    initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="col-span-full text-center py-20 text-home-subtext italic"
                   >
@@ -219,7 +228,7 @@ export default function Products() {
           {/* Load More Button */}
           {!isLoading && !isPending && filteredProducts.length > visibleCount && (
             <div className="mt-20 text-center">
-              <button 
+              <button
                 onClick={handleLoadMore}
                 className="px-12 py-4 border border-gold-primary/30 text-home-text text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-gold-primary hover:text-home-bg transition-colors"
               >
@@ -236,7 +245,7 @@ export default function Products() {
         <AnimatePresence>
           {isMobileFilterOpen && (
             <motion.div className="fixed inset-0 z-[60] md:hidden">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 onClick={() => setIsMobileFilterOpen(false)}
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -259,11 +268,10 @@ export default function Products() {
                         <button
                           key={c}
                           onClick={() => handleCategoryChange(c)}
-                          className={`px-6 py-3 border text-[10px] uppercase tracking-widest transition-all ${
-                            activeCategory === c 
-                              ? "bg-gold-primary text-home-bg border-gold-primary" 
-                              : "border-home-text/20 text-home-text"
-                          }`}
+                          className={`px-6 py-3 border text-[10px] uppercase tracking-widest transition-all ${activeCategory === c
+                            ? "bg-gold-primary text-home-bg border-gold-primary"
+                            : "border-home-text/20 text-home-text"
+                            }`}
                         >
                           {c}
                         </button>
@@ -289,7 +297,7 @@ export default function Products() {
                 </div>
 
                 <div className="p-6 border-t border-gold-primary/10">
-                  <button 
+                  <button
                     onClick={() => setIsMobileFilterOpen(false)}
                     className="w-full bg-home-text text-home-bg py-4 text-xs uppercase tracking-[0.3em] font-bold"
                   >
@@ -320,7 +328,7 @@ function ProductCard({ product }) {
   const mainImage = getImage(product);
 
   const handleAction = (e, actionCallback) => {
-    e.preventDefault(); 
+    e.preventDefault();
     e.stopPropagation();
     actionCallback();
   };
@@ -336,41 +344,41 @@ function ProductCard({ product }) {
         className="group cursor-pointer h-full"
       >
         <div className="relative w-full aspect-[4/5] overflow-hidden bg-home-text/5 mb-6">
-          <img 
-            src={mainImage} 
-            alt={product.name} 
+          <img
+            src={mainImage}
+            alt={product.name}
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-out"
           />
-          
-          <img 
-            src={mainImage} 
+
+          <img
+            src={mainImage}
             alt={`${product.name} detail`}
-            loading="lazy" 
+            loading="lazy"
             className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out grayscale group-hover:grayscale-0"
           />
 
           <div className="absolute inset-4 border border-gold-primary/0 group-hover:border-gold-primary/20 transition-all duration-500 pointer-events-none" />
-          
+
           <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-home-bg/90 backdrop-blur-sm border-t border-gold-primary/10">
             <div className="flex gap-2 w-full h-full">
               <div className="flex items-center justify-between px-2 py-3 border border-gold-primary/30 text-home-text w-24 bg-home-bg">
-                <button 
+                <button
                   onClick={(e) => handleAction(e, () => setQuantity(q => Math.max(1, q - 1)))}
                   className="text-[10px] hover:text-gold-primary p-1"
                 >
                   <PiMinus />
                 </button>
                 <span className="text-[10px] font-bold">{quantity}</span>
-                <button 
+                <button
                   onClick={(e) => handleAction(e, () => setQuantity(q => q + 1))}
                   className="text-[10px] hover:text-gold-primary p-1"
                 >
                   <PiPlus />
                 </button>
               </div>
-              
-              <button 
+
+              <button
                 onClick={(e) => handleAction(e, () => console.log(`Added ${quantity} of ${product.name}`))}
                 className="flex-1 py-3 border border-gold-primary/30 text-[9px] uppercase tracking-[0.2em] hover:bg-gold-primary hover:text-home-bg transition-all"
               >

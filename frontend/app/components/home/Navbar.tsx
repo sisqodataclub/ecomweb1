@@ -1,16 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Link } from "react-router"; 
-import { 
-  PiList, 
-  PiX, 
-  PiShoppingBag, 
-  PiMagnifyingGlass, 
-  PiArrowRight, 
-  PiInstagramLogo, 
-  PiWhatsappLogo, 
-  PiEnvelopeSimple 
+import { Link } from "react-router";
+import {
+  PiList,
+  PiX,
+  PiShoppingBag,
+  PiMagnifyingGlass,
+  PiArrowRight,
+  PiInstagramLogo,
+  PiWhatsappLogo,
+  PiEnvelopeSimple
 } from "react-icons/pi";
+import { useCart } from "~/contexts/CartContext";
 
 // --- ANIMATION CONFIGURATION ---
 const menuOverlayVars = {
@@ -21,12 +22,12 @@ const menuOverlayVars = {
 
 const menuPanelVars = {
   initial: { y: "-100%" },
-  animate: { 
+  animate: {
     y: "0%",
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } 
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
   },
-  exit: { 
-    y: "-100%", 
+  exit: {
+    y: "-100%",
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
   }
 };
@@ -43,6 +44,7 @@ const containerVars = {
 };
 
 export default function Navbar() {
+  const { cartCount } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -70,14 +72,13 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: "circOut" }}
-        className={`fixed top-0 w-full z-50 transition-all duration-700 font-sans ${
-          isScrolled 
-            ? "py-4 bg-home-bg/85 backdrop-blur-xl border-b border-gold-primary/10 shadow-sm" 
-            : "py-6 bg-transparent"
-        }`}
+        className={`fixed top-0 w-full z-50 transition-all duration-700 font-sans ${isScrolled
+          ? "py-4 bg-home-bg/85 backdrop-blur-xl border-b border-gold-primary/10 shadow-sm"
+          : "py-6 bg-transparent"
+          }`}
       >
         <div className="container mx-auto px-6 flex justify-between items-center text-home-text">
-          
+
           {/* --- LEFT: Links + Mobile Trigger + Search --- */}
           <div className="flex-1 flex items-center justify-start gap-6">
             <div className="hidden md:flex gap-8">
@@ -86,15 +87,15 @@ export default function Navbar() {
               <NavLink label="About Us" to="/about" />
             </div>
 
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="md:hidden -ml-2 p-2 text-2xl hover:text-gold-primary transition-colors active:scale-90"
               aria-label="Menu"
             >
               <PiList />
             </button>
-            
-            <button 
+
+            <button
               onClick={() => setIsSearchOpen(true)}
               className="text-xl hover:text-gold-primary transition-colors p-1"
               aria-label="Search"
@@ -115,16 +116,18 @@ export default function Navbar() {
           {/* --- RIGHT: Desktop Links + Cart --- */}
           <div className="flex-1 flex justify-end items-center gap-8">
             <div className="hidden md:flex gap-8">
-                <NavLink label="Men" to="/products?gender=Men" />
-                <NavLink label="Women" to="/products?gender=Women" />
+              <NavLink label="Men" to="/products?gender=Men" />
+              <NavLink label="Women" to="/products?gender=Women" />
             </div>
-            
+
             {/* Cart Icon Linked to /cart */}
             <Link to="/cart" className="relative group p-1" aria-label="Cart">
               <PiShoppingBag className="text-2xl hover:text-gold-primary transition-colors" />
-              <span className="absolute -top-1 -right-1 bg-gold-primary text-home-bg text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300">
-                2
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gold-primary text-home-bg text-[8px] font-bold min-w-[14px] h-3.5 px-1 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -137,7 +140,7 @@ export default function Navbar() {
             className="fixed inset-0 z-[60] flex flex-col"
           >
             {/* The Backdrop (Bottom Half) - Clicks close menu */}
-            <motion.div 
+            <motion.div
               variants={menuOverlayVars}
               initial="initial" animate="animate" exit="exit"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -154,7 +157,7 @@ export default function Navbar() {
               <div className="flex justify-between items-center p-6 border-b border-gold-primary/10">
                 {/* ✅ UPDATED: Added text-gold-primary here too */}
                 <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary"> Équiva Iconic</span>
-                <button 
+                <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 -mr-2 text-3xl hover:text-gold-primary transition-colors active:rotate-90 duration-300"
                 >
@@ -164,27 +167,27 @@ export default function Navbar() {
 
               {/* Links Body */}
               <div className="flex-1 flex flex-col justify-center px-8 relative">
-                  <div className="absolute -right-20 top-1/4 w-64 h-64 bg-gold-primary/5 rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute -right-20 top-1/4 w-64 h-64 bg-gold-primary/5 rounded-full blur-[80px] pointer-events-none" />
 
-                  {/* ... inside the Mobile Menu container ... */}
+                {/* ... inside the Mobile Menu container ... */}
                 <motion.div variants={containerVars} className="flex flex-col gap-5">
-                    <MobileNavLink index="01" label="Collections" to="/products" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="02" label="About Us" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="03" label="Women" to="/products?gender=Women" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="04" label="Men" to="/products?gender=Men" onClick={() => setIsMobileMenuOpen(false)} />
-                    <MobileNavLink index="05" label="T&C" onClick={() => setIsMobileMenuOpen(false)} />
+                  <MobileNavLink index="01" label="Collections" to="/products" onClick={() => setIsMobileMenuOpen(false)} />
+                  <MobileNavLink index="02" label="About Us" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
+                  <MobileNavLink index="03" label="Women" to="/products?gender=Women" onClick={() => setIsMobileMenuOpen(false)} />
+                  <MobileNavLink index="04" label="Men" to="/products?gender=Men" onClick={() => setIsMobileMenuOpen(false)} />
+                  <MobileNavLink index="05" label="T&C" onClick={() => setIsMobileMenuOpen(false)} />
                 </motion.div>
               </div>
 
               {/* Minimal Footer inside Menu */}
               <div className="px-8 py-6 border-t border-gold-primary/10 bg-home-text/5 flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-home-subtext text-xs">
-                    <PiEnvelopeSimple /> concierge@ÉquivaIconic.com
-                  </div>
-                  <div className="flex gap-4 text-lg">
-                      <PiInstagramLogo className="hover:text-gold-primary cursor-pointer" />
-                      <PiWhatsappLogo className="hover:text-gold-primary cursor-pointer" />
-                  </div>
+                <div className="flex items-center gap-2 text-home-subtext text-xs">
+                  <PiEnvelopeSimple /> concierge@ÉquivaIconic.com
+                </div>
+                <div className="flex gap-4 text-lg">
+                  <PiInstagramLogo className="hover:text-gold-primary cursor-pointer" />
+                  <PiWhatsappLogo className="hover:text-gold-primary cursor-pointer" />
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -201,7 +204,7 @@ export default function Navbar() {
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-[100] bg-home-bg/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 font-sans text-home-text"
           >
-            <button 
+            <button
               onClick={() => setIsSearchOpen(false)}
               className="absolute top-8 right-8 hover:text-gold-primary transition-colors text-xs uppercase tracking-widest flex items-center gap-2"
             >
@@ -209,7 +212,7 @@ export default function Navbar() {
             </button>
 
             <div className="w-full max-w-2xl text-center">
-              <motion.label 
+              <motion.label
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -217,16 +220,16 @@ export default function Navbar() {
               >
                 Search The Collection
               </motion.label>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.3, duration: 0.8, ease: "circOut" }}
                 className="relative group border-b border-home-text/20 focus-within:border-gold-primary transition-colors duration-500"
               >
-                <input 
-                  type="text" 
-                  placeholder="Type to search..." 
+                <input
+                  type="text"
+                  placeholder="Type to search..."
                   autoFocus
                   className="w-full bg-transparent py-4 text-3xl md:text-5xl font-serif text-center placeholder:text-home-text/20 focus:outline-none"
                 />
@@ -238,7 +241,7 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* 4. FOOTER TICKER (Fixed Bottom) */}
-      <motion.div 
+      <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
@@ -257,7 +260,7 @@ export default function Navbar() {
 
 function NavLink({ label, to }) {
   return (
-    <Link 
+    <Link
       to={to || "#"}
       className="relative text-[10px] uppercase tracking-[0.2em] font-medium text-home-subtext hover:text-gold-primary transition-colors group py-2"
     >
@@ -270,17 +273,17 @@ function NavLink({ label, to }) {
 function MobileNavLink({ index, label, onClick, to }) {
   return (
     <motion.div variants={linkVars} className="group relative w-full">
-        <Link
-            to={to || "#"}
-            onClick={onClick}
-            className="flex items-baseline gap-6 w-full"
-        >
-            <span className="text-[10px] text-gold-primary/60 font-mono group-hover:text-gold-primary transition-colors">{index}</span>
-            <span className="text-3xl md:text-5xl font-serif text-home-text group-hover:text-gold-primary group-hover:italic transition-all duration-500">
-                {label}
-            </span>
-        </Link>
-        <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gold-primary/10 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+      <Link
+        to={to || "#"}
+        onClick={onClick}
+        className="flex items-baseline gap-6 w-full"
+      >
+        <span className="text-[10px] text-gold-primary/60 font-mono group-hover:text-gold-primary transition-colors">{index}</span>
+        <span className="text-3xl md:text-5xl font-serif text-home-text group-hover:text-gold-primary group-hover:italic transition-all duration-500">
+          {label}
+        </span>
+      </Link>
+      <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gold-primary/10 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
     </motion.div>
   );
 }
