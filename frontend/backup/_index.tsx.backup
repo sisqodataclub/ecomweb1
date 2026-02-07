@@ -1,8 +1,9 @@
-﻿import Navbar from "~/components/home/Navbar";
+import Navbar from "~/components/home/Navbar";
 import HomeContent from "~/components/home/HomeContent";
 import Press from "~/components/home/Press"; 
 import ProductGrid from "~/components/home/ProductGrid";
 import FragranceNotes from "~/components/home/FragranceNotes";
+import Gifting from "~/components/home/Gifting";
 import Footer from "~/components/home/Footer";
 
 export default function Index() {
@@ -20,11 +21,8 @@ export default function Index() {
       <ProductGrid />
       
       {/* 4. Educational Content */}
-      <FragranceNotes />
-      
-      {/* 5. Personal Engagement */}
-      
-      {/* 6. Brand Story & Services */}
+      <FragranceNotes />{/* 6. Brand Story & Services */}
+      <Gifting />
       
       <Footer />
     </main>

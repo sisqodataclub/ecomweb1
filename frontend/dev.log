@@ -1,0 +1,80 @@
+
+> dev
+> react-router dev
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.0.111:5173/
+  ➜  Network: http://10.42.0.0:5173/
+  ➜  Network: http://10.42.0.1:5173/
+3:37:09 AM [vite] (client) hmr update /app/app.css
+3:37:09 AM [vite] (ssr) hmr update /app/app.css
+3:37:51 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:37:51 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:37:51 AM [vite] (client) hmr update /app/app.css, /app/components/home/HomeContent.tsx
+3:37:51 AM [vite] (ssr) page reload app/components/home/HomeContent.tsx
+3:39:57 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:39:57 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:39:57 AM [vite] (client) hmr update /app/app.css, /app/components/home/HomeContent.tsx
+3:39:57 AM [vite] (ssr) page reload app/components/home/HomeContent.tsx
+3:40:09 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:40:09 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:40:09 AM [vite] (client) hmr update /app/app.css, /app/components/home/HomeContent.tsx
+3:40:09 AM [vite] (ssr) page reload app/components/home/HomeContent.tsx
+3:40:09 AM [vite] (ssr) Error when evaluating SSR module virtual:react-router/server-build: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:40:09 AM [vite] Internal server error: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:40:09 AM [react-router] Config saved
+3:40:09 AM [vite] Internal server error: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:40:09 AM [vite] Internal server error: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:40:09 AM [vite] Internal server error: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:40:09 AM [vite] Internal server error: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:40:10 AM [vite] Internal server error: Failed to load url /app/components/home/HomeContent.tsx (resolved id: /home/kali/ai/workspace/projects/ecomweb1/frontend/app/components/home/HomeContent.tsx) in /home/kali/ai/workspace/projects/ecomweb1/frontend/app/routes/_index.tsx. Does the file exist?
+      at loadAndTransform (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:22663:33)
+      at fetchModule (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:33993:15)
+      at handleInvoke (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25834:21)
+      at EventEmitter.listenerForInvokeHandler (file:///home/kali/ai/workspace/projects/ecomweb1/frontend/node_modules/vite/dist/node/chunks/config.js:25889:13)
+3:41:48 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:41:48 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:41:48 AM [vite] (client) hmr update /app/app.css, /app/components/home/HomeContent.tsx
+3:41:48 AM [vite] (ssr) page reload app/components/home/HomeContent.tsx
+3:41:48 AM [react-router] Config saved
+3:42:47 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:42:47 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:42:47 AM [vite] (client) hmr update /app/app.css, /app/components/home/HomeContent.tsx
+3:42:47 AM [vite] (ssr) page reload app/components/home/HomeContent.tsx
+3:44:19 AM [react-router] Config saved
+3:45:12 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:45:12 AM [vite] (client) hmr update /app/components/home/HomeContent.tsx
+3:45:12 AM [vite] (client) hmr update /app/app.css, /app/components/home/HomeContent.tsx
+3:45:12 AM [vite] (ssr) page reload app/components/home/HomeContent.tsx
+3:50:01 AM [vite] (client) hmr update /app/routes/_index.tsx
+3:50:01 AM [vite] (client) hmr update /app/routes/_index.tsx
+3:50:01 AM [vite] (client) hmr update /app/app.css, /app/routes/_index.tsx
+3:50:01 AM [vite] (ssr) page reload app/routes/_index.tsx
+3:50:15 AM [vite] (client) hmr update /app/routes/_index.tsx
+3:50:15 AM [vite] (client) hmr update /app/routes/_index.tsx
+3:50:15 AM [vite] (client) hmr update /app/app.css, /app/routes/_index.tsx
+3:50:15 AM [vite] (ssr) page reload app/routes/_index.tsx

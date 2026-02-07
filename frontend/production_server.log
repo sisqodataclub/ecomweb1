@@ -1,0 +1,7 @@
+
+> start
+> react-router-serve ./build/server/index.js --host 192.168.0.111 --port 5173
+
+[react-router-serve] http://localhost:3000 (http://192.168.0.111:3000)
+GET / 200 - - 734.521 ms
+

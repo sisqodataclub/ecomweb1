@@ -3,6 +3,8 @@ import HomeContent from "~/components/home/HomeContent";
 import Press from "~/components/home/Press"; 
 import ProductGrid from "~/components/home/ProductGrid";
 import FragranceNotes from "~/components/home/FragranceNotes";
+import FragranceQuiz from "~/components/home/FragranceQuiz";
+import Gifting from "~/components/home/Gifting";
 import Footer from "~/components/home/Footer";
 
 export default function Index() {
@@ -23,8 +25,10 @@ export default function Index() {
       <FragranceNotes />
       
       {/* 5. Personal Engagement */}
+      <FragranceQuiz />
       
       {/* 6. Brand Story & Services */}
+      <Gifting />
       
       <Footer />
     </main>
