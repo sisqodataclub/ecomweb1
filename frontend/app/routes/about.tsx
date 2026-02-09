@@ -306,20 +306,39 @@ export default function About() {
 
     
       {/* --- 7. CONTACT SECTION --- */}
-      <section className="py-20 bg-home-bg/50 border-t border-gold-primary/20" aria-label="Contact">
-        <div className="container mx-auto px-6 text-center">
-          <h3 className="text-2xl md:text-3xl font-serif mb-6 text-home-text">Get in Touch</h3>
-          <p className="text-home-subtext mb-8 max-w-md mx-auto">
-            For inquiries, collaborations, or feedback, feel free to reach out.
-          </p>
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-home-bg border border-gold-primary/30 rounded-lg hover:border-gold-primary transition-colors duration-300">
-            <span className="text-home-text font-mono text-lg">fd92uk@gmail.com</span>
-            <svg className="w-5 h-5 text-gold-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-        </div>
-      </section>
+      {/* --- 7. CONTACT SECTION --- */}
+<section className="py-20 bg-home-bg/50 border-t border-gold-primary/20" aria-label="Contact">
+  <div className="container mx-auto px-6 text-center">
+    <h3 className="text-2xl md:text-3xl font-serif mb-6 text-home-text">Get in Touch</h3>
+    <p className="text-home-subtext mb-8 max-w-md mx-auto">
+      For inquiries, collaborations, or bespoke guidance, our concierge is available to assist you.
+    </p>
+    
+    {/* Wrapped in a mailto link to open the email app immediately */}
+    <a 
+      href="mailto:equivaiconic.uk@gmail.com" 
+      className="inline-flex items-center gap-4 px-8 py-4 bg-[#0a0a0a] border border-gold-primary/30 rounded-lg hover:border-gold-primary hover:bg-gold-primary/5 transition-all duration-300 group"
+    >
+      <span className="text-home-text font-mono text-base md:text-lg tracking-tight">
+        equivaiconic.uk@gmail.com
+      </span>
+      <svg 
+        className="w-5 h-5 text-gold-primary transition-transform duration-300 group-hover:scale-110" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24" 
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={1.5} 
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+        />
+      </svg>
+    </a>
+  </div>
+</section>
 </article>
   );
 }

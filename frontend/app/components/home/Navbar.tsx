@@ -12,6 +12,10 @@ import {
 } from "react-icons/pi";
 import { useCart } from "~/contexts/CartContext";
 
+// --- CONSTANTS ---
+const INSTAGRAM_URL = "https://www.instagram.com/equiva_iconic_uk_?igsh=MWR2NnkzZ25zb2w5MQ==";
+const EMAIL_ADDRESS = "equivaiconic.uk@gmail.com";
+
 // --- ANIMATION CONFIGURATION ---
 const menuOverlayVars = {
   initial: { opacity: 0 },
@@ -55,7 +59,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll
   useEffect(() => {
     if (isMobileMenuOpen || isSearchOpen) {
       document.body.style.overflow = "hidden";
@@ -81,7 +84,6 @@ export default function Navbar() {
           {/* --- LEFT: Links + Mobile Trigger + Search --- */}
           <div className="flex-1 flex items-center justify-start gap-6">
             <div className="hidden md:flex gap-8">
-              {/* Linked Collection to /products */}
               <NavLink label="Collection" to="/products" />
               <NavLink label="About Us" to="/about" />
             </div>
@@ -106,11 +108,10 @@ export default function Navbar() {
           {/* --- CENTER: Logo --- */}
           <div className="flex-1 flex justify-center">
             <Link to="/" className="text-gold-primary whitespace-nowrap text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group text-shimmer flex items-center gap-3">
-              {/* ✅ UPDATED SIZE: Increased from h-8 to h-12 */}
-              <img 
-                src="/logo3.png" 
-                alt="Équiva Logo" 
-                className="h-12 w-auto object-contain" 
+              <img
+                src="/logo3.png"
+                alt="Équiva Logo"
+                className="h-12 w-auto object-contain"
               />
               <span>Équiva</span>
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-gold-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -124,7 +125,6 @@ export default function Navbar() {
               <NavLink label="Women" to="/products?gender=Women" />
             </div>
 
-            {/* Cart Icon Linked to /cart */}
             <Link to="/cart" className="relative group p-1" aria-label="Cart">
               <PiShoppingBag className="text-2xl hover:text-gold-primary transition-colors" />
               {cartCount > 0 && (
@@ -143,7 +143,6 @@ export default function Navbar() {
           <motion.div
             className="fixed inset-0 z-[60] flex flex-col"
           >
-            {/* The Backdrop (Bottom Half) - Clicks close menu */}
             <motion.div
               variants={menuOverlayVars}
               initial="initial" animate="animate" exit="exit"
@@ -151,7 +150,6 @@ export default function Navbar() {
               className="absolute inset-0 bg-black/20 backdrop-blur-sm"
             />
 
-            {/* The Menu Panel (Top Half - approx 60% height) */}
             <motion.div
               variants={menuPanelVars}
               initial="initial" animate="animate" exit="exit"
@@ -160,7 +158,6 @@ export default function Navbar() {
               {/* Header */}
               <div className="flex justify-between items-center p-6 border-b border-gold-primary/10">
                 <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary text-shimmer flex items-center gap-2">
-                   {/* ✅ UPDATED SIZE: Increased from h-6 to h-9 */}
                    <img src="/logo3.png" alt="Équiva Logo" className="h-9 w-auto object-contain" />
                    Équiva
                 </span>
@@ -187,11 +184,13 @@ export default function Navbar() {
 
               {/* Minimal Footer inside Menu */}
               <div className="px-8 py-6 border-t border-gold-primary/10 bg-home-text/5 flex justify-between items-center">
-                <div className="flex items-center gap-2 text-home-subtext text-xs">
-                  <PiEnvelopeSimple /> concierge@ÉquivaIconic.com
-                </div>
+                <a href={`mailto:${EMAIL_ADDRESS}`} className="flex items-center gap-2 text-home-subtext text-xs hover:text-gold-primary transition-colors">
+                  <PiEnvelopeSimple /> {EMAIL_ADDRESS}
+                </a>
                 <div className="flex gap-4 text-lg">
-                  <PiInstagramLogo className="hover:text-gold-primary cursor-pointer" />
+                  <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+                    <PiInstagramLogo className="hover:text-gold-primary cursor-pointer transition-colors" />
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -252,10 +251,10 @@ export default function Navbar() {
         transition={{ delay: 1, duration: 0.8 }}
         className="fixed bottom-0 w-full z-[40] bg-home-bg/90 backdrop-blur-md border-t border-gold-primary/20 text-home-text py-4 flex items-center justify-center gap-8 overflow-hidden font-sans shadow-[0_-5px_20px_rgba(0,0,0,0.05)]"
       >
-        <a href="#" className="hover:scale-110 transition-transform duration-300">
+        <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300">
            <PiInstagramLogo className="text-gold-primary text-xl" />
         </a>
-        <a href="#" className="hover:scale-110 transition-transform duration-300">
+        <a href={`mailto:${EMAIL_ADDRESS}`} className="hover:scale-110 transition-transform duration-300">
            <PiEnvelopeSimple className="text-gold-primary text-xl" />
         </a>
       </motion.div>

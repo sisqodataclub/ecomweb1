@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, useSpring, useTransform, useMotionValue, useReducedMotion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
-import { PiDrop, PiInfinity, PiCaretDown, PiX, PiStarFour, PiArrowRight } from "react-icons/pi";
+import { PiDrop, PiInfinity, PiCaretDown, PiX, PiStarFour } from "react-icons/pi";
 
 // --- LUXURY COPY ---
 const BRAND_MOTTO = "Presence. Without Permission.";
@@ -20,7 +20,6 @@ interface MonolithLayoutProps {
 export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
   // --- STATE ---
   const [showTopBanner, setShowTopBanner] = useState(true);
-  const [showAdCard, setShowAdCard] = useState(true); // Control for the new big ad
   const [bannerIndex, setBannerIndex] = useState(0);
 
   const shouldReduceMotion = useReducedMotion();
@@ -50,7 +49,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
   }, [mouseX, mouseY, shouldReduceMotion]);
 
   const springConfig = { damping: 30, stiffness: 80 };
-  
+
   const moveX = useSpring(useTransform(mouseX, [-1, 1], shouldReduceMotion ? [0, 0] : [-15, 15]), springConfig);
   const moveY = useSpring(useTransform(mouseY, [-1, 1], shouldReduceMotion ? [0, 0] : [-15, 15]), springConfig);
   const moveBgX = useSpring(useTransform(mouseX, [-1, 1], shouldReduceMotion ? [0, 0] : [30, -30]), springConfig);
@@ -68,7 +67,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
   return (
     <motion.div
       variants={containerVars}
-      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-home-bg px-4 pt-12"
+      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-home-bg px-4 pt-12 antialiased"
     >
       {/* === TOP ROTATING BANNER === */}
       <AnimatePresence>
@@ -79,8 +78,8 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
             exit={{ y: -50, opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className={`fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-3 backdrop-blur-md border-b transition-colors duration-500 ${
-              isDarkTheme 
-                ? "bg-black/60 border-gold-primary/20 text-gold-primary" 
+              isDarkTheme
+                ? "bg-black/60 border-gold-primary/20 text-gold-primary"
                 : "bg-white/60 border-gold-primary/30 text-home-text"
             }`}
           >
@@ -101,7 +100,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
                 </motion.div>
               </AnimatePresence>
             </div>
-            <button 
+            <button
               onClick={() => setShowTopBanner(false)}
               className="w-6 flex justify-end opacity-60 hover:opacity-100 transition-opacity"
             >
@@ -111,10 +110,9 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
         )}
       </AnimatePresence>
 
-
       {/* PARALLAX BACKGROUND TEXT */}
       <motion.div
-        style={{ x: moveBgX }}
+        style={{ x: moveBgX, willChange: "transform" }}
         initial={{ opacity: 0, letterSpacing: shouldReduceMotion ? "3em" : "1em" }}
         animate={{ opacity: 0.04, letterSpacing: "3.5em" }}
         transition={{ duration: 6, ease: "easeOut" }}
@@ -127,7 +125,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
         </span>
       </motion.div>
 
-      {/* GOLD PARTICLES */}
+      {/* GOLD PARTICLES - Optimized for Speed */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <motion.div
@@ -138,17 +136,17 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
               opacity: [0, 0.3, 0]
             }}
             transition={{ duration: 15 + i * 2, repeat: Infinity, delay: i * 2 }}
-            className={`absolute bottom-0 w-[1px] h-[1px] rounded-full blur-[1px] ${
+            className={`absolute bottom-0 w-[1.5px] h-[1.5px] rounded-full shadow-sm ${
               isDarkTheme ? "bg-gold-primary/60" : "bg-gold-primary"
-            } ${shouldReduceMotion ? "opacity-10" : ""}`}
-            style={{ left: `${15 + i * 15}%` }}
+            }`}
+            style={{ left: `${15 + i * 15}%`, title: "transform", willChange: "transform" }}
           />
         ))}
       </div>
 
       {/* === CENTERPIECE === */}
       <div className="relative z-10 flex flex-col items-center w-full max-w-6xl mx-auto">
-        
+
         {/* Decorative Line */}
         <motion.div
           initial={{ height: 0, opacity: 0 }}
@@ -160,94 +158,37 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
         />
 
         <div className="relative group text-center w-full flex flex-col items-center justify-center">
-          
-          {/* GLOW EFFECT */}
-          <motion.div 
-            style={{ x: moveX, y: moveY }}
+
+          {/* GLOW EFFECT - Optimized Blur */}
+          <motion.div
+            style={{ x: moveX, y: moveY, translateZ: 0 }}
             className={`absolute inset-0 transition-opacity duration-1000 ${
-               shouldReduceMotion 
-                ? "opacity-5 bg-gold-primary/10 rounded-full" 
-                : "blur-[80px] md:blur-[140px] opacity-30 group-hover:opacity-50"
-            } ${isDarkTheme ? "bg-gold-primary/5" : "bg-gold-primary/10"}`} 
+               shouldReduceMotion
+                ? "opacity-5 bg-gold-primary/10 rounded-full"
+                : "blur-[60px] md:blur-[100px] opacity-30 group-hover:opacity-50"
+            } ${isDarkTheme ? "bg-gold-primary/5" : "bg-gold-primary/10"}`}
           />
 
           {/* === LOGO AREA === */}
           <div className="relative w-full flex justify-center items-center">
-            
-            {/* MAIN LOGO */}
-            <motion.div variants={itemVars} className="relative z-10">
-              
-              {/* ✅ NEW: BIG LUXURY AD CAMPAIGN CARD (Floating) */}
-              <AnimatePresence>
-              {showAdCard && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20, rotateX: 10 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ delay: 2, duration: 1.2, ease: "easeOut" }}
-                  // Positioned on top-left of the bottle to look like a magazine overlay
-                  className={`absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 md:translate-x-0 md:-left-20 z-50 w-[280px] md:w-[320px] backdrop-blur-xl border flex flex-col shadow-2xl overflow-hidden ${
-                    isDarkTheme 
-                      ? "bg-black/80 border-gold-primary/30" 
-                      : "bg-white/80 border-gold-primary/40"
-                  }`}
-                >
-                  {/* Campaign Content Row */}
-                  <div className="flex h-24">
-                    {/* AD IMAGE (Placeholder for Campaign Shot) */}
-                    <div className="w-1/3 bg-gradient-to-br from-gold-primary via-yellow-600 to-yellow-900 relative">
-                      {/* You can replace this div with: <img src="your-ad.jpg" className="w-full h-full object-cover" /> */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                         <PiStarFour className="text-white text-2xl" />
-                      </div>
-                    </div>
-
-                    {/* AD COPY */}
-                    <div className="w-2/3 p-4 flex flex-col justify-center text-left relative">
-                       {/* Close Button */}
-                       <button 
-                        onClick={() => setShowAdCard(false)}
-                        className={`absolute top-2 right-2 text-xs opacity-50 hover:opacity-100 ${isDarkTheme ? "text-white" : "text-black"}`}
-                       >
-                         <PiX />
-                       </button>
-
-                       <span className={`text-[8px] font-bold uppercase tracking-[0.2em] mb-1 opacity-60 ${isDarkTheme ? "text-gold-primary" : "text-black"}`}>
-                         Member Access
-                       </span>
-                       <h3 className={`text-lg font-serif italic leading-none mb-2 ${isDarkTheme ? "text-white" : "text-black"}`}>
-                         The Gold Sale
-                       </h3>
-                       <div className="flex items-center gap-2">
-                         <span className={`text-[10px] uppercase tracking-widest font-black ${isDarkTheme ? "text-white" : "text-black"}`}>
-                           20% OFF
-                         </span>
-                         <PiArrowRight className="text-xs text-gold-primary animate-pulse" />
-                       </div>
-                    </div>
-                  </div>
-                  
-                  {/* Progress Bar / Decorative Bottom Line */}
-                  <motion.div 
-                    initial={{ width: "0%" }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 4, ease: "linear" }} // Simulates "time running out"
-                    className="h-[2px] bg-gold-primary"
-                  />
-                </motion.div>
-              )}
-              </AnimatePresence>
-
-              <img 
-                src="/logo3.png" 
-                alt="Équiva Iconic Logo" 
+            <motion.div 
+              variants={itemVars} 
+              className="relative z-10"
+              style={{ willChange: "transform, opacity" }}
+            >
+              <img
+                src="/logo3.png"
+                alt="Équiva Iconic Logo"
+                fetchPriority="high"
+                loading="eager"
+                decoding="sync"
                 className="w-[70vw] md:w-[40vw] max-w-[500px] h-auto object-contain drop-shadow-2xl opacity-90"
               />
             </motion.div>
           </div>
 
           {/* === IDENTITY & COPY === */}
-          <motion.div 
+          <motion.div
             variants={itemVars}
             className={`relative z-20 -mt-24 md:-mt-32 max-w-2xl text-center px-4 flex flex-col items-center gap-8`}
           >
@@ -271,7 +212,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
               <h2 className={`text-2xl md:text-4xl font-serif tracking-wide leading-tight ${
                 isDarkTheme ? "text-white" : "text-black"
               }`}>
-                Smell Iconic. <br/> 
+                Smell Iconic. <br/>
                 <span className="italic font-light opacity-80">Take your chance.</span>
               </h2>
             </div>
@@ -296,9 +237,9 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
           <p className={`text-[8px] uppercase tracking-[0.6em] opacity-50 ${isDarkTheme ? "text-gold-primary" : "text-home-text"}`}>
              {BRAND_MOTTO}
           </p>
-          
+
           {/* Scroll Arrow */}
-          <motion.div 
+          <motion.div
             animate={shouldReduceMotion ? {} : { opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className={`mt-2 ${isDarkTheme ? "text-gold-primary/30" : "text-gold-primary/50"}`}
