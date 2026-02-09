@@ -8,7 +8,6 @@ import {
   PiMagnifyingGlass,
   PiArrowRight,
   PiInstagramLogo,
-  PiWhatsappLogo,
   PiEnvelopeSimple
 } from "react-icons/pi";
 import { useCart } from "~/contexts/CartContext";
@@ -106,9 +105,14 @@ export default function Navbar() {
 
           {/* --- CENTER: Logo --- */}
           <div className="flex-1 flex justify-center">
-            {/* ✅ UPDATED: Added text-gold-primary and whitespace-nowrap */}
-            <Link to="/" className="text-gold-primary whitespace-nowrap text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group">
-              Équiva
+            <Link to="/" className="text-gold-primary whitespace-nowrap text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group text-shimmer flex items-center gap-3">
+              {/* ✅ UPDATED SIZE: Increased from h-8 to h-12 */}
+              <img 
+                src="/logo3.png" 
+                alt="Équiva Logo" 
+                className="h-12 w-auto object-contain" 
+              />
+              <span>Équiva</span>
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-gold-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
           </div>
@@ -155,8 +159,11 @@ export default function Navbar() {
             >
               {/* Header */}
               <div className="flex justify-between items-center p-6 border-b border-gold-primary/10">
-                {/* ✅ UPDATED: Added text-gold-primary here too */}
-                <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary"> Équiva</span>
+                <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary text-shimmer flex items-center gap-2">
+                   {/* ✅ UPDATED SIZE: Increased from h-6 to h-9 */}
+                   <img src="/logo3.png" alt="Équiva Logo" className="h-9 w-auto object-contain" />
+                   Équiva
+                </span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 -mr-2 text-3xl hover:text-gold-primary transition-colors active:rotate-90 duration-300"
@@ -169,13 +176,12 @@ export default function Navbar() {
               <div className="flex-1 flex flex-col justify-center px-8 relative">
                 <div className="absolute -right-20 top-1/4 w-64 h-64 bg-gold-primary/5 rounded-full blur-[80px] pointer-events-none" />
 
-                {/* ... inside the Mobile Menu container ... */}
                 <motion.div variants={containerVars} className="flex flex-col gap-5">
                   <MobileNavLink index="01" label="Collections" to="/products" onClick={() => setIsMobileMenuOpen(false)} />
                   <MobileNavLink index="02" label="About Us" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
                   <MobileNavLink index="03" label="Women" to="/products?gender=Women" onClick={() => setIsMobileMenuOpen(false)} />
                   <MobileNavLink index="04" label="Men" to="/products?gender=Men" onClick={() => setIsMobileMenuOpen(false)} />
-                  <MobileNavLink index="05" label="T&C" onClick={() => setIsMobileMenuOpen(false)} />
+                  <MobileNavLink index="05" label="T&C" to="/tc" onClick={() => setIsMobileMenuOpen(false)} />
                 </motion.div>
               </div>
 
@@ -186,7 +192,6 @@ export default function Navbar() {
                 </div>
                 <div className="flex gap-4 text-lg">
                   <PiInstagramLogo className="hover:text-gold-primary cursor-pointer" />
-                  <PiWhatsappLogo className="hover:text-gold-primary cursor-pointer" />
                 </div>
               </div>
             </motion.div>
@@ -245,12 +250,14 @@ export default function Navbar() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
-        className="fixed bottom-0 w-full z-[40] bg-home-bg/90 backdrop-blur-md border-t border-gold-primary/20 text-home-text py-3 flex items-center justify-center gap-3 overflow-hidden font-sans shadow-[0_-5px_20px_rgba(0,0,0,0.05)]"
+        className="fixed bottom-0 w-full z-[40] bg-home-bg/90 backdrop-blur-md border-t border-gold-primary/20 text-home-text py-4 flex items-center justify-center gap-8 overflow-hidden font-sans shadow-[0_-5px_20px_rgba(0,0,0,0.05)]"
       >
-        <PiEnvelopeSimple className="text-gold-primary text-lg" />
-        <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-center">
-          Complimentary Worldwide Shipping on Orders Over $250
-        </p>
+        <a href="#" className="hover:scale-110 transition-transform duration-300">
+           <PiInstagramLogo className="text-gold-primary text-xl" />
+        </a>
+        <a href="#" className="hover:scale-110 transition-transform duration-300">
+           <PiEnvelopeSimple className="text-gold-primary text-xl" />
+        </a>
       </motion.div>
     </>
   );

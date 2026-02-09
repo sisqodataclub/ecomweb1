@@ -1,5 +1,5 @@
 // 1. DEFINE THE BASE URL
-export const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+export const API_BASE = import.meta.env.VITE_API_URL || "https://core.franciscodes.com";
 
 /**
  * Helper to construct full image URLs.
@@ -10,6 +10,10 @@ export const getImageUrl = (path) => {
   return `${API_BASE}${path}`;
 };
 
+/**
+ * FETCH PRODUCTS (Public Access)
+ * Fetches the list of products from the API.
+ */
 export async function getProducts() {
   try {
     const res = await fetch(`${API_BASE}/api/products/`, {
@@ -66,115 +70,74 @@ export async function getProducts() {
 }
 
 /**
- * CART OPERATIONS (Flask Backend)
+ * FETCH BOOKINGS (Private Access)
  */
-export async function getCart() {
+export async function getBookings() {
   try {
-    const res = await fetch(`${API_BASE}/api/cart`, {
+    const url = `${API_BASE}/api/booking/`;
+    const token = typeof window !== 'undefined' ? localStorage.getItem("authToken") : null;
+
+    const res = await fetch(url, {
       method: "GET",
-      credentials: "include",
       headers: {
-        "Accept": "application/json",
-      }
+        "Content-Type": "application/json",
+        "Authorization": token ? `Bearer ${token}` : "",
+        "X-Tenant": "web"
+      },
     });
-    if (!res.ok) throw new Error(`Failed to fetch cart: ${res.status}`);
+
+    if (res.status === 401) throw new Error("Unauthorized: Please log in.");
+    if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
     return await res.json();
   } catch (error) {
-    console.error("API Error (getCart):", error);
+    console.error("Failed to fetch bookings:", error);
     return [];
   }
 }
 
-export async function addToCart(productId, quantity = 1) {
+/**
+ * FETCH BLOGS
+ */
+export async function getBlogs() {
   try {
-    const res = await fetch(`${API_BASE}/api/cart/add`, {
-      method: "POST",
-      credentials: "include",
+    const res = await fetch(`${API_BASE}/api/blogs/`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "X-Tenant": "web"
       },
-      body: JSON.stringify({ product_id: productId, quantity })
     });
-    if (!res.ok) throw new Error(`Failed to add to cart: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("API Error (addToCart):", error);
-    throw error;
-  }
-}
 
-export async function updateCartItem(productId, quantity) {
-  try {
-    const res = await fetch(`${API_BASE}/api/cart/update`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ product_id: productId, quantity })
-    });
-    if (!res.ok) throw new Error(`Failed to update cart: ${res.status}`);
+    if (!res.ok) throw new Error(`Error fetching blogs: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error("API Error (updateCartItem):", error);
-    throw error;
-  }
-}
-
-export async function removeFromCart(productId) {
-  try {
-    const res = await fetch(`${API_BASE}/api/cart/remove/${productId}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-      }
-    });
-    if (!res.ok) throw new Error(`Failed to remove from cart: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("API Error (removeFromCart):", error);
-    throw error;
-  }
-}
-
-export async function clearCart() {
-  try {
-    const res = await fetch(`${API_BASE}/api/cart/clear`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-      }
-    });
-    if (!res.ok) throw new Error(`Failed to clear cart: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("API Error (clearCart):", error);
-    throw error;
+    console.error("Failed to fetch blogs:", error);
+    return [];
   }
 }
 
 /**
- * CHECKOUT (Flask Backend)
+ * CREATE CHECKOUT SESSION
  */
 export async function createCheckoutSession(cartItems, userEmail, isGift = false) {
   try {
-    const response = await fetch(`${API_BASE}/api/checkout`, {
+    const response = await fetch(`${API_BASE}/api/payments/bookings/create_checkout/`, {
       method: "POST",
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        "X-Tenant": "web",
       },
       body: JSON.stringify({
-        email: userEmail,
-        name: "Customer", // TODO: Get from user input or form
-        address: "123 Main St", // TODO: Get from checkout form
-        city: "New York",
-        country: "USA",
-        postal_code: "10001",
-        is_gift: isGift
-      })
+        items: cartItems.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          // Only send variant if it exists and is meaningful
+          variant: item.variant && item.variant !== "Extrait de Parfum" ? item.variant : null
+        })),
+        customer_email: userEmail || "guest@example.com",
+        is_gift: isGift,
+      }),
     });
 
     if (!response.ok) {
@@ -184,7 +147,7 @@ export async function createCheckoutSession(cartItems, userEmail, isGift = false
 
     return await response.json();
   } catch (error) {
-    console.error("Checkout Error:", error);
+    console.error("Payment Error:", error);
     throw error;
   }
 }

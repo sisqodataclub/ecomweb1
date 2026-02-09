@@ -25,6 +25,16 @@ export default function Products() {
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(6);
 
+
+  // Permanent obsidian theme
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme-color", "obsidian");
+    // Cleanup on unmount (optional, but good practice)
+    return () => {
+      // Note: For permanent theme pages, you might not want to reset
+      // document.documentElement.removeAttribute("data-theme-color");
+    };
+  }, []);
   // --- 1. FETCH DATA FROM API ---
   useEffect(() => {
     async function fetchProducts() {

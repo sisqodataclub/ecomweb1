@@ -107,8 +107,8 @@ export default function Navbar() {
           {/* --- CENTER: Logo --- */}
           <div className="flex-1 flex justify-center">
             {/* ✅ UPDATED: Added text-gold-primary and whitespace-nowrap */}
-            <Link to="/" className="text-gold-primary whitespace-nowrap text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group">
-              Équiva
+            <Link to="/" className="text-gold-primary whitespace-nowrap text-2xl md:text-3xl font-serif font-bold tracking-tighter cursor-pointer relative group text-shimmer">
+              <img src="/logo3-navbar.png" alt="Logo" className="h-8 w-8 inline-block mr-2 align-middle" />Équiva
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-gold-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
           </div>
@@ -156,7 +156,7 @@ export default function Navbar() {
               {/* Header */}
               <div className="flex justify-between items-center p-6 border-b border-gold-primary/10">
                 {/* ✅ UPDATED: Added text-gold-primary here too */}
-                <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary"> Équiva</span>
+                <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary text-shimmer"><img src="/logo3-navbar.png" alt="Logo" className="h-6 w-6 inline-block mr-2 align-middle" />Équiva</span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 -mr-2 text-3xl hover:text-gold-primary transition-colors active:rotate-90 duration-300"

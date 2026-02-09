@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PiTrash,
@@ -20,7 +20,18 @@ export default function Cart() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // --- LOGIC ---
+  
+  // Permanent obsidian theme
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme-color", "obsidian");
+    // Cleanup on unmount (optional, but good practice)
+    return () => {
+      // Note: For permanent theme pages, you might not want to reset
+      // document.documentElement.removeAttribute("data-theme-color");
+    };
+  }, []);
+
+// --- LOGIC ---
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = subtotal > 250 ? 0 : 25; // Complimentary over $250
   const total = subtotal + shipping;

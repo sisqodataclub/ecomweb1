@@ -42,7 +42,7 @@ export default function About() {
   const parallaxY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <article ref={containerRef} className="min-h-screen bg-home-bg text-home-text font-sans selection:bg-gold-primary selection:text-home-bg relative transition-colors duration-1000">
+    <article ref={containerRef} className="min-h-screen bg-home-bg text-home-text font-sans selection:bg-gold-primary selection:text-home-bg relative transition-colors duration-1000" data-theme-color="obsidian">
       
       {/* --- SEO: INJECT SCHEMA --- */}
       <script
@@ -105,8 +105,7 @@ export default function About() {
                 variants={fadeUp} 
                 className="text-home-subtext text-sm md:text-lg font-light leading-relaxed tracking-wide max-w-2xl px-4"
             >
-                Équiva Iconic redefines luxury fragrance by studying legendary perfume masterpieces. Our <strong className="text-gold-primary font-normal">extrait de parfum concentration</strong> delivers unparalleled longevity and sillage—crafted for those who seek a <strong className="text-gold-primary font-normal">signature scent</strong> that becomes part of their identity. Experience the fusion of heritage and innovation.
-            </motion.p>
+                We analyse the DNA of the world’s most iconic perfumes and recreate them with uncompromising precision. Our high-potency Extrait de Parfum formulas ensure your scent lasts longer and projects further—giving you the luxury experience without the luxury markup.</motion.p>
           </motion.div>
 
         </div>
@@ -305,6 +304,22 @@ export default function About() {
         </div>
       </footer>
 
-    </article>
+    
+      {/* --- 7. CONTACT SECTION --- */}
+      <section className="py-20 bg-home-bg/50 border-t border-gold-primary/20" aria-label="Contact">
+        <div className="container mx-auto px-6 text-center">
+          <h3 className="text-2xl md:text-3xl font-serif mb-6 text-home-text">Get in Touch</h3>
+          <p className="text-home-subtext mb-8 max-w-md mx-auto">
+            For inquiries, collaborations, or feedback, feel free to reach out.
+          </p>
+          <div className="inline-flex items-center gap-4 px-8 py-4 bg-home-bg border border-gold-primary/30 rounded-lg hover:border-gold-primary transition-colors duration-300">
+            <span className="text-home-text font-mono text-lg">fd92uk@gmail.com</span>
+            <svg className="w-5 h-5 text-gold-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+      </section>
+</article>
   );
 }

@@ -1,12 +1,21 @@
 {
-  "instructions": [
-    {
-      "request": "Create clientinstructions.json file to track all requests and work done on the project",
-      "time": "2026-02-07T04:26:04.087382",
-      "summary": "Created clientinstructions.json file to serve as a central log for all project requests and work tracking. This file will be read by all agents before starting work on the project.",
-      "files_edited_or_created": [
-        "clientinstructions.json"
-      ]
-    }
-  ]
+  "system_status": {
+    "server_url": "http://192.168.0.111:5173",
+    "is_running": true,
+    "framework": "React Router v7 (Framework Mode)",
+    "root_dir": "frontend/app"
+  },
+  "core_protocols": [
+    "🚨 PROTOCOL 1: DO NOT START THE SERVER. It is running system-wide. Just use the URL.",
+    "🛡️ PROTOCOL 2: NO 'SED'. When modifying code, write a temporary Python script to read/replace/write the file safely.",
+    "✅ PROTOCOL 3: VERIFICATION LOOP. Before marking a task complete, you MUST curl the server URL to ensure you didn't break the build."
+  ],
+
+  "current_mission_tasks": [
+    "TASK 1: navbar.tsx (app/components/home)",
+    "   - add our new created logo in 'ai/workspace/logo.svg' to the navbar next to the Equiva"
+	
+
+
+   ]
 }
