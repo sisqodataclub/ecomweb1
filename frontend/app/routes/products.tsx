@@ -3,24 +3,17 @@
 import { useState, useMemo, useTransition, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  PiSlidersHorizontal, 
-  PiX, 
-  PiCheck, 
-  PiCaretDown, 
-  PiArrowsDownUp,
-  PiMagnifyingGlass,
-  PiSparkle,
-  PiTrash
+import {
+  PiCaretDown,
+  PiSparkle
 } from "react-icons/pi";
 
-// FIXED IMPORTS: Navigating from /routes/products.tsx to /components/ and /lib/
+// FIXED IMPORTS
 import Navbar from "../components/home/Navbar";
 import { getProducts } from "../lib/api";
 
 const FILTERS = {
   category: ["All", "Men", "Women", "Unisex"],
-  price: ["All", "Under £200", "£200 - £250", "£250+"],
   sort: [
     { label: "Featured", value: "featured" },
     { label: "Price: Low to High", value: "price_asc" },
@@ -39,18 +32,12 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-
+  
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "All");
-  const [activePrice, setActivePrice] = useState("All");
   const [activeSort, setActiveSort] = useState("featured");
   
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(6);
-
-  // Check if any filters are active to show "Clear All"
-  const hasActiveFilters = activeCategory !== "All" || activePrice !== "All" || searchQuery !== "";
 
   useEffect(() => {
     async function loadData() {
@@ -66,21 +53,18 @@ export default function Products() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category") || searchParams.get("gender");
+    if (categoryFromUrl) {
+      setActiveCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
+
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
       const productCat = product.category ? product.category.toLowerCase() : "unisex";
       const selectedCat = activeCategory.toLowerCase();
-      const categoryMatch = activeCategory === "All" || productCat === selectedCat;
-
-      let priceMatch = true;
-      const price = parseFloat(product.price);
-      if (activePrice === "Under £200") priceMatch = price < 200;
-      if (activePrice === "£200 - £250") priceMatch = price >= 200 && price <= 250;
-      if (activePrice === "£250+") priceMatch = price > 250;
-
-      const searchMatch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-      return categoryMatch && priceMatch && searchMatch;
+      return activeCategory === "All" || productCat === selectedCat;
     });
 
     if (activeSort === "price_asc") {
@@ -90,100 +74,92 @@ export default function Products() {
     }
 
     return result;
-  }, [products, activeCategory, activePrice, activeSort, searchQuery]);
+  }, [products, activeCategory, activeSort]);
 
   const handleCategoryChange = (c) => {
     startTransition(() => {
       setActiveCategory(c);
       setVisibleCount(6);
-      if (c !== "All") searchParams.set("category", c);
-      else searchParams.delete("category");
+      if (c !== "All") {
+        searchParams.set("category", c);
+      } else {
+        searchParams.delete("category");
+        searchParams.delete("gender");
+      }
       setSearchParams(searchParams);
-    });
-  };
-
-  const clearAllFilters = () => {
-    startTransition(() => {
-      setActiveCategory("All");
-      setActivePrice("All");
-      setSearchQuery("");
-      searchParams.delete("category");
-      setSearchParams(searchParams);
-      setVisibleCount(6);
     });
   };
 
   return (
-    <div className="pt-24 min-h-screen bg-[#050505] text-white selection:bg-gold-primary selection:text-black">
-      <Navbar />
+    <div className="pt-24 min-h-screen bg-[#050505] text-white selection:bg-gold-primary selection:text-black antialiased">
+      {/* FORCE DARK THEME: 
+          This ensures both Desktop and Mobile Menu overlays 
+          stay Obsidian/Black and do not flip to white on scroll.
+      */}
+      <Navbar isDarkTheme={true} />
 
       <div className="pt-[60px] md:pt-[80px]">
         {/* HEADER */}
         <header className="container mx-auto px-6 py-12 text-center">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex justify-center mb-4">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }} 
+            animate={{ scale: 1, opacity: 1 }} 
+            className="flex justify-center mb-4"
+          >
              <PiSparkle className="text-gold-primary text-xl animate-pulse" />
           </motion.div>
-          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl md:text-7xl font-serif mb-6">
+          <motion.h1 
+            initial={{ y: 20, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }} 
+            className="text-5xl md:text-7xl font-serif"
+          >
             The <span className="text-shimmer italic text-gold-primary">Collection</span>
           </motion.h1>
-          <p className="text-gray-500 uppercase tracking-[0.4em] text-[9px] max-w-md mx-auto">
-            London • Marrakech • High Atlas
-          </p>
+          {/* Subtitle removed as requested */}
         </header>
 
-        {/* SEARCH, FILTER & SORT BAR */}
-        <div className="sticky top-[70px] md:top-[80px] z-40 bg-[#050505]/90 backdrop-blur-xl border-y border-white/5">
-          <div className="container mx-auto px-6 h-16 flex items-center justify-between gap-4">
+        {/* NAVIGATION BAR (Categories + Sort) */}
+        <div className="sticky top-[70px] md:top-[80px] z-40 bg-[#050505]/95 backdrop-blur-xl border-y border-white/5">
+          <div className="container mx-auto px-6 h-16 flex items-center justify-between">
             
-            {/* Desktop Search */}
-            <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full w-72 focus-within:border-gold-primary/40 transition-all">
-              <PiMagnifyingGlass className="text-gray-500" />
-              <input 
-                type="text" 
-                placeholder="Find a fragrance..." 
-                className="bg-transparent text-[10px] uppercase tracking-widest outline-none w-full placeholder:text-gray-700"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {/* Desktop Categories */}
-            <div className="hidden md:flex gap-10">
+            {/* Categories (Larger Touch Targets for Mobile) */}
+            <div className="flex gap-8 md:gap-10 overflow-x-auto no-scrollbar py-2 items-center">
               {FILTERS.category.map((c) => (
                 <button
                   key={c}
                   onClick={() => handleCategoryChange(c)}
-                  className={`text-[10px] uppercase tracking-[0.3em] transition-all ${activeCategory === c ? "text-gold-primary font-black scale-110" : "text-gray-500 hover:text-white"}`}
+                  className={`text-[12px] md:text-[10px] uppercase tracking-[0.3em] transition-all whitespace-nowrap py-3 px-1 ${
+                    activeCategory.toLowerCase() === c.toLowerCase() 
+                    ? "text-gold-primary font-black scale-105" 
+                    : "text-gray-500 hover:text-white"
+                  }`}
                 >
                   {c}
                 </button>
               ))}
             </div>
 
-            <div className="flex items-center gap-4 ml-auto">
-              {/* CLEAR ALL BUTTON (Desktop) */}
-              <AnimatePresence>
-                {hasActiveFilters && (
-                  <motion.button
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    onClick={clearAllFilters}
-                    className="hidden lg:flex items-center gap-2 text-[9px] uppercase tracking-widest text-red-400/70 hover:text-red-400 transition-colors mr-2"
-                  >
-                    <PiTrash /> Clear All
-                  </motion.button>
-                )}
-              </AnimatePresence>
-
-              <button
-                onClick={() => setIsMobileFilterOpen(true)}
-                className="flex items-center gap-2 text-[10px] uppercase tracking-widest border border-white/10 bg-white/5 px-5 py-2.5 rounded-full hover:border-gold-primary transition-all"
-              >
-                <PiSlidersHorizontal className="text-gold-primary" /> 
-                <span className="hidden sm:inline">Refine</span>
-              </button>
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-4 text-[12px] md:text-[10px] uppercase tracking-[0.2em] text-gray-500 relative group cursor-pointer h-full ml-4">
+              <span className="flex items-center gap-2 whitespace-nowrap">
+                Sort <PiCaretDown className="group-hover:rotate-180 transition-transform duration-300" />
+              </span>
+              
+              <div className="absolute top-full right-0 mt-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                <div className="w-52 bg-[#0a0a0a] border border-white/10 shadow-2xl p-2 flex flex-col">
+                  {FILTERS.sort.map((s) => (
+                    <button 
+                      key={s.value} 
+                      onClick={() => setActiveSort(s.value)} 
+                      className={`text-left px-4 py-4 text-[11px] md:text-[10px] uppercase tracking-widest hover:bg-white/5 transition-colors ${activeSort === s.value ? "text-gold-primary" : "text-white"}`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
 
@@ -201,16 +177,8 @@ export default function Products() {
             </AnimatePresence>
           </motion.div>
 
-          {/* EMPTY STATE */}
-          {!isLoading && filteredProducts.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-gray-500 font-serif italic mb-6">No scents match your current selection.</p>
-              <button onClick={clearAllFilters} className="text-gold-primary uppercase tracking-[0.3em] text-[10px] border-b border-gold-primary/30 pb-1">Reset Filters</button>
-            </div>
-          )}
-
           {!isLoading && filteredProducts.length > visibleCount && (
-            <div className="mt-24 text-center">
+            <div className="mt-24 text-center pb-20">
               <button
                 onClick={() => setVisibleCount(v => v + 3)}
                 className="px-16 py-5 border border-gold-primary/20 text-white text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-gold-primary hover:text-black transition-all rounded-sm"
@@ -221,59 +189,8 @@ export default function Products() {
           )}
         </div>
       </div>
-
-      {/* MOBILE FILTER DRAWER */}
-      <AnimatePresence>
-        {isMobileFilterOpen && (
-          <motion.div className="fixed inset-0 z-[100] md:hidden">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMobileFilterOpen(false)} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute bottom-0 w-full bg-[#080808] border-t border-white/10 rounded-t-[3rem] overflow-hidden max-h-[85vh] flex flex-col">
-              <div className="p-8 flex-1 overflow-y-auto space-y-10">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-3xl font-serif italic text-gold-primary">Refine</h3>
-                  <div className="flex items-center gap-4">
-                    {hasActiveFilters && (
-                      <button onClick={clearAllFilters} className="text-[10px] uppercase tracking-widest text-red-400">Reset</button>
-                    )}
-                    <button onClick={() => setIsMobileFilterOpen(false)} className="bg-white/5 p-3 rounded-full"><PiX className="text-xl" /></button>
-                  </div>
-                </div>
-                
-                {/* Mobile Search */}
-                <div className="space-y-4">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Search</p>
-                  <div className="bg-white/5 border border-white/5 p-5 rounded-2xl flex items-center gap-4">
-                    <PiMagnifyingGlass className="text-gold-primary text-xl" />
-                    <input 
-                      type="text" 
-                      placeholder="Search collection..." 
-                      className="bg-transparent outline-none w-full text-sm"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* Mobile Sort */}
-                <div className="space-y-4">
-                   <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold flex items-center gap-2"><PiArrowsDownUp /> Sort Order</p>
-                   <div className="flex flex-col gap-3">
-                     {FILTERS.sort.map((s) => (
-                       <button key={s.value} onClick={() => setActiveSort(s.value)} className={`text-left p-4 rounded-xl text-xs uppercase tracking-widest ${activeSort === s.value ? "bg-gold-primary text-black font-bold" : "bg-white/5 text-gray-400"}`}>{s.label}</button>
-                     ))}
-                   </div>
-                </div>
-              </div>
-
-              <div className="p-8 border-t border-white/5 bg-[#080808]">
-                <button onClick={() => setIsMobileFilterOpen(false)} className="w-full bg-white text-black py-5 text-[10px] uppercase tracking-[0.4em] font-black rounded-xl">
-                  Show {filteredProducts.length} Results
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      
+      <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
     </div>
   );
 }
@@ -282,7 +199,11 @@ function ProductCard({ product }) {
   return (
     <Link to={`/product/${product.id}`} className="block group">
       <motion.div layout className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-8">
-        <img src={product.image} alt={product.name} className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out" />
+        <img 
+          src={product.image} 
+          alt={product.name} 
+          className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out" 
+        />
       </motion.div>
       <div className="text-center px-4">
         <h3 className="text-2xl md:text-3xl font-serif mb-2 group-hover:text-gold-primary transition-colors duration-500">{product.name}</h3>
