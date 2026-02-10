@@ -11,6 +11,44 @@ export const getImageUrl = (path) => {
 };
 
 /**
+ * FETCH SINGLE PRODUCT (Added to fix build error)
+ * Fetches a single product by ID and processes images.
+ */
+export async function getProductById(id) {
+  try {
+    const res = await fetch(`${API_BASE}/api/products/${id}/`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "X-Tenant": "web"
+      }
+    });
+
+    if (!res.ok) throw new Error(`Product ${id} not found`);
+
+    const item = await res.json();
+
+    // Replicating image logic for consistency
+    let mainImage = null;
+    const primaryImgObj = item.images?.find(img => img.is_primary);
+
+    if (primaryImgObj?.image_url) mainImage = primaryImgObj.image_url;
+    else if (item.images?.[0]?.image_url) mainImage = item.images[0].image_url;
+    else if (item.image_url) mainImage = item.image_url;
+
+    return {
+      ...item,
+      category: item.category || "Unisex",
+      image: getImageUrl(mainImage),
+      images: item.images || []
+    };
+  } catch (error) {
+    console.error("API Error (getProductById):", error);
+    return null;
+  }
+}
+
+/**
  * FETCH PRODUCTS (Public Access)
  * Fetches the list of products from the API.
  */
@@ -20,7 +58,7 @@ export async function getProducts() {
       method: "GET",
       headers: {
         "Accept": "application/json",
-        "X-Tenant": "web" // ✅ FIXED: Added Tenant Header
+        "X-Tenant": "web" 
       }
     });
 
@@ -30,7 +68,6 @@ export async function getProducts() {
 
     const data = await res.json();
 
-    // ✅ FIXED: Handle Django Pagination vs List
     let rawResults = [];
     if (data.results && Array.isArray(data.results)) {
       rawResults = data.results;
@@ -38,9 +75,7 @@ export async function getProducts() {
       rawResults = data;
     }
 
-    // ✅ FIXED: Map data to match what your ProductGrid expects
     return rawResults.map(item => {
-      // Replicating your "getProductImage" logic here so it's reusable
       let mainImage = null;
       const primaryImgObj = item.images?.find(img => img.is_primary);
 
@@ -51,12 +86,9 @@ export async function getProducts() {
       return {
         id: item.id,
         name: item.name,
-        // Use category for filtering (Men/Women/Unisex)
         category: item.category || "Unisex",
         price: item.price,
-        // Pre-process the image URL here
         image: getImageUrl(mainImage),
-        // Pass raw images array if needed for galleries
         images: item.images || [],
         sku: item.sku,
         description: item.description
@@ -132,7 +164,6 @@ export async function createCheckoutSession(cartItems, userEmail, isGift = false
         items: cartItems.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,
-          // Only send variant if it exists and is meaningful
           variant: item.variant && item.variant !== "Extrait de Parfum" ? item.variant : null
         })),
         customer_email: userEmail || "guest@example.com",
