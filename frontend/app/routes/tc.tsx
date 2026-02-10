@@ -12,12 +12,12 @@ const schemaData = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Terms & Conditions | Équiva Iconic",
-  "url": "https://web.franciscodes.com/terms",
+  "url": "https://www.equivaiconic.co.uk",
   "description": "Legal terms, conditions, and 14-day return policy for Équiva Iconic luxury perfumes. UK-based premium fragrance brand.",
   "publisher": {
     "@type": "Brand",
     "name": "Équiva Iconic",
-    "url": "https://web.franciscodes.com"
+    "url": "https://www.equivaiconic.co.uk"
   }
 };
 
@@ -215,12 +215,6 @@ export default function TermsConditions() {
                 </p>
               </div>
               
-              <div className="space-y-4">
-                <h3 className="text-xl font-serif text-home-text">Eligibility</h3>
-                <p>
-                  You must be at least 18 years old to use our website. By using the site, you represent that you meet this age requirement and have legal capacity to enter into agreements.
-                </p>
-              </div>
               
               <div className="space-y-4">
                 <h3 className="text-xl font-serif text-home-text">Account Responsibility</h3>
@@ -453,31 +447,16 @@ export default function TermsConditions() {
               <div className="space-y-4">
                 <h3 className="text-xl font-serif text-home-text">Customer Service</h3>
                 <p>
-                  For questions about orders, returns, or general inquiries, please email us at support@equivaiconic.com. We aim to respond within 24 hours.
+                  For questions about orders, returns, or general inquiries, please email us at equivaiconic.uk@gmail.com. We aim to respond within 24 hours.
                 </p>
               </div>
               
-              <div className="space-y-4">
-                <h3 className="text-xl font-serif text-home-text">Legal Inquiries</h3>
-                <p>
-                  For legal matters, please contact legal@equivaiconic.com. All legal correspondence must be in writing and sent to our registered office.
-                </p>
-              </div>
               
-              <div className="space-y-4">
-                <h3 className="text-xl font-serif text-home-text">Registered Office</h3>
-                <p>
-                  Équiva Iconic Ltd.<br />
-                  123 Luxury Lane<br />
-                  London, W1K 7TN<br />
-                  United Kingdom
-                </p>
-              </div>
               
               <div className="space-y-4">
                 <h3 className="text-xl font-serif text-home-text">Effective Date</h3>
                 <p>
-                  These terms are effective as of January 1, 2024. Last updated: February 8, 2024.
+                  These terms are effective as of January 1, 2026. Last updated: February 8, 2026.
                 </p>
               </div>
             </div>
@@ -493,7 +472,7 @@ export default function TermsConditions() {
             By using our website, you acknowledge that you have read, understood, and agree to these Terms & Conditions.
           </p>
           <p>
-            © 2024 Équiva Iconic. All rights reserved. | <Link to="/privacy" className="text-gold-primary hover:underline">Privacy Policy</Link> | <Link to="/contact" className="text-gold-primary hover:underline">Contact Us</Link>
+            © 2026 Équiva Iconic. All rights reserved.
           </p>
         </div>
       </footer>
