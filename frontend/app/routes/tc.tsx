@@ -291,7 +291,7 @@ export default function TermsConditions() {
         >
           <div className="flex items-center gap-4 mb-8">
             <PiPackage className="text-3xl text-gold-primary" />
-            <h2 className="text-3xl font-serif text-home-text">4. Shipping & Delivery</h2>
+            <h2 className="text-3xl font-serif text-home-text">3. Shipping & Delivery</h2>
           </div>
           
           <div className="obsidian-glass p-8 border border-gold-primary/10 rounded-lg">
@@ -345,7 +345,7 @@ export default function TermsConditions() {
         >
           <div className="flex items-center gap-4 mb-8">
             <PiLock className="text-3xl text-gold-primary" />
-            <h2 className="text-3xl font-serif text-home-text">5. Privacy & Data</h2>
+            <h2 className="text-3xl font-serif text-home-text">4. Privacy & Data</h2>
           </div>
           
           <div className="obsidian-glass p-8 border border-gold-primary/10 rounded-lg">
@@ -374,7 +374,7 @@ export default function TermsConditions() {
               <div className="space-y-4">
                 <h3 className="text-xl font-serif text-home-text">Your Rights</h3>
                 <p>
-                  Under GDPR, you have the right to access, correct, or delete your personal data. Contact us at privacy@equivaiconic.com to exercise these rights.
+                  Under GDPR, you have the right to access, correct, or delete your personal data. Contact us to exercise these rights.
                 </p>
               </div>
             </div>
@@ -392,7 +392,7 @@ export default function TermsConditions() {
         >
           <div className="flex items-center gap-4 mb-8">
             <PiWarningCircle className="text-3xl text-gold-primary" />
-            <h2 className="text-3xl font-serif text-home-text">6. Liability</h2>
+            <h2 className="text-3xl font-serif text-home-text">5. Liability</h2>
           </div>
           
           <div className="obsidian-glass p-8 border border-gold-primary/10 rounded-lg">
@@ -439,7 +439,7 @@ export default function TermsConditions() {
         >
           <div className="flex items-center gap-4 mb-8">
             <PiEnvelope className="text-3xl text-gold-primary" />
-            <h2 className="text-3xl font-serif text-home-text">7. Contact</h2>
+            <h2 className="text-3xl font-serif text-home-text">6. Contact</h2>
           </div>
           
           <div className="obsidian-glass p-8 border border-gold-primary/10 rounded-lg">

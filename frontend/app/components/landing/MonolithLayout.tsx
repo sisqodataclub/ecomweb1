@@ -8,8 +8,7 @@ const BRAND_MOTTO = "Presence. Without Permission.";
 
 // --- ADVERTISING BANNER MESSAGES (Top bar) ---
 const BANNER_MESSAGES = [
-  "Complimentary Royal Shipping on Orders Over £50",
-  "Welcome Offer: Use Code 'ICONIC' for 15% Off",
+  "Complimentary Royal Shipping on Orders Over £100",
   "New Arrival: The 'Oud Wood' Interpretation"
 ];
 

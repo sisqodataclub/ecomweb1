@@ -1,11 +1,12 @@
 "use client";
 
-import { useParams, Link } from "react-router"; 
+import { useParams, Link } from "react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiMinus, PiPlus, PiCaretDown, PiArrowLeft, PiCheck, PiSparkle, PiShieldCheck, PiAirplaneTilt } from "react-icons/pi";
 
 // FIXED RELATIVE IMPORTS
+import SEO from "../components/ui/SEO";
 import Navbar from "../components/home/Navbar";
 import { getProductById } from "../lib/api";
 import { useCart } from "../contexts/CartContext";
@@ -28,7 +29,7 @@ export default function ProductDetail() {
   };
 
   useEffect(() => {
-    async function loadProduct() {
+    const loadProduct = async () => {
       try {
         const data = await getProductById(id);
         if (!data) throw new Error("Artefact not found");
@@ -38,8 +39,11 @@ export default function ProductDetail() {
       } finally {
         setLoading(false);
       }
+    };
+
+    if (id) {
+      loadProduct();
     }
-    if (id) loadProduct();
   }, [id]);
 
   if (loading) {
@@ -68,24 +72,38 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-gold-primary selection:text-black antialiased overflow-x-hidden">
-      {/* MONOLITH PERSISTENCE: Navbar stays Obsidian Black */}
+      
+      <SEO 
+        title={`${product?.name} • Équiva Iconic`} 
+        description={product?.description}
+        image={product?.image}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product?.name,
+          "image": product?.image,
+          "description": product?.description,
+          "offers": {
+            "@type": "Offer",
+            "price": product?.price,
+            "priceCurrency": "GBP",
+            "availability": "https://schema.org/InStock"
+          }
+        }}
+      />
+
       <Navbar isDarkTheme={true} />
 
-      {/* BACKGROUND TEXT (Monolith Style) */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-[0.03] flex items-center justify-center select-none">
         <span className="text-[30vw] font-serif uppercase tracking-tighter">ÉQUIVA</span>
       </div>
 
       <div className="pt-32 pb-20 container mx-auto px-6 relative z-10">
-        
-        {/* Back Link */}
         <Link to="/products" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-gray-500 hover:text-gold-primary mb-12 transition-all">
           <PiArrowLeft /> Back to Collection
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-          
-          {/* LEFT: MONOLITH IMAGE BOX (GPU Accelerated) */}
           <div className="lg:col-span-7 relative">
             <div className="sticky top-32">
               <motion.div
@@ -94,20 +112,15 @@ export default function ProductDetail() {
                 transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                 className="relative aspect-[4/5] w-full bg-[#0a0a0a] overflow-hidden group border border-white/5"
               >
-                {/* Glow behind image */}
                 <div className="absolute inset-0 bg-gold-primary/5 blur-[100px] opacity-50 pointer-events-none" />
-                
                 <img
                   src={product.image}
                   alt={product.name}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
                   style={{ willChange: "transform", transform: "translateZ(0)" }}
                 />
-
-                {/* Corner Decoration */}
                 <div className="absolute top-8 left-8 border-l border-t border-gold-primary/30 w-12 h-12 pointer-events-none" />
                 <div className="absolute bottom-8 right-8 border-r border-b border-gold-primary/30 w-12 h-12 pointer-events-none" />
-                
                 <div className="absolute top-1/2 left-6 -translate-y-1/2 opacity-20 hidden md:block">
                    <p className="rotate-90 origin-left text-[8px] uppercase tracking-[1em] whitespace-nowrap">Extrait de Parfum</p>
                 </div>
@@ -115,7 +128,6 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* RIGHT: OBSIDIAN DETAILS */}
           <div className="lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -144,10 +156,8 @@ export default function ProductDetail() {
                 {product.description || `An uncompromising olfactory signature, distilled for those who claim their presence without permission.`}
               </p>
 
-              {/* ACTION AREA */}
               <div className="flex flex-col gap-4 mb-16">
                 <div className="flex gap-4 h-16">
-                  {/* Quantity Selector */}
                   <div className="flex items-center border border-white/10 px-6 h-full w-40 justify-between bg-white/5 hover:border-gold-primary/30 transition-colors">
                     <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="text-gray-500 hover:text-gold-primary transition-colors p-2">
                       <PiMinus />
@@ -158,7 +168,6 @@ export default function ProductDetail() {
                     </button>
                   </div>
 
-                  {/* Add to Cart */}
                   <button
                     onClick={() => {
                       addToCart(product, quantity);
@@ -182,7 +191,6 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* TRUST BADGES */}
               <div className="grid grid-cols-2 gap-8 py-8 border-y border-white/5 mb-10 text-[9px] uppercase tracking-[0.2em] text-gray-500">
                   <div className="flex items-center gap-3">
                     <PiAirplaneTilt className="text-xl text-gold-primary/60" />
@@ -194,7 +202,6 @@ export default function ProductDetail() {
                   </div>
               </div>
 
-              {/* ACCORDIONS (Obsidion Style) */}
               <div className="space-y-2">
                 <AccordionItem
                   title="Olfactory Composition"
@@ -218,7 +225,6 @@ export default function ProductDetail() {
                   </p>
                 </AccordionItem>
               </div>
-
             </motion.div>
           </div>
         </div>

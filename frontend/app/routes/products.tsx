@@ -9,6 +9,7 @@ import {
 } from "react-icons/pi";
 
 // FIXED IMPORTS
+import SEO from "../components/ui/SEO";
 import Navbar from "../components/home/Navbar";
 import { getProducts } from "../lib/api";
 
@@ -32,15 +33,18 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "All");
   const [activeSort, setActiveSort] = useState("featured");
   
+  // FIXED: State for Mobile Sort Menu
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
   const [isPending, startTransition] = useTransition();
   const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    async function loadData() {
+    const loadData = async () => {
       try {
         const data = await getProducts();
         setProducts(data);
@@ -49,7 +53,7 @@ export default function Products() {
       } finally {
         setIsLoading(false);
       }
-    }
+    };
     loadData();
   }, []);
 
@@ -92,45 +96,44 @@ export default function Products() {
 
   return (
     <div className="pt-24 min-h-screen bg-[#050505] text-white selection:bg-gold-primary selection:text-black antialiased">
-      {/* FORCE DARK THEME: 
-          This ensures both Desktop and Mobile Menu overlays 
-          stay Obsidian/Black and do not flip to white on scroll.
-      */}
+
+      <SEO
+        title={`${activeCategory === 'All' ? 'The Collection' : activeCategory} • Équiva Iconic`}
+        description={`Explore the ${activeCategory.toLowerCase()} collection of iconic perfume recreations. Presence without permission.`}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": `The ${activeCategory} Collection | Équiva Iconic`,
+          "description": "Luxury extrait de parfum recreations of the world's most iconic scents.",
+          "url": "https://www.equivaiconic.co.uk/products",
+        }}
+      />
+
       <Navbar isDarkTheme={true} />
 
       <div className="pt-[60px] md:pt-[80px]">
-        {/* HEADER */}
         <header className="container mx-auto px-6 py-12 text-center">
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }} 
-            animate={{ scale: 1, opacity: 1 }} 
-            className="flex justify-center mb-4"
-          >
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex justify-center mb-4">
              <PiSparkle className="text-gold-primary text-xl animate-pulse" />
           </motion.div>
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
-            className="text-5xl md:text-7xl font-serif"
-          >
+          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl md:text-7xl font-serif">
             The <span className="text-shimmer italic text-gold-primary">Collection</span>
           </motion.h1>
-          {/* Subtitle removed as requested */}
         </header>
 
-        {/* NAVIGATION BAR (Categories + Sort) */}
+        {/* NAVIGATION BAR */}
         <div className="sticky top-[70px] md:top-[80px] z-40 bg-[#050505]/95 backdrop-blur-xl border-y border-white/5">
           <div className="container mx-auto px-6 h-16 flex items-center justify-between">
             
-            {/* Categories (Larger Touch Targets for Mobile) */}
+            {/* Categories */}
             <div className="flex gap-8 md:gap-10 overflow-x-auto no-scrollbar py-2 items-center">
               {FILTERS.category.map((c) => (
                 <button
                   key={c}
                   onClick={() => handleCategoryChange(c)}
                   className={`text-[12px] md:text-[10px] uppercase tracking-[0.3em] transition-all whitespace-nowrap py-3 px-1 ${
-                    activeCategory.toLowerCase() === c.toLowerCase() 
-                    ? "text-gold-primary font-black scale-105" 
+                    activeCategory.toLowerCase() === c.toLowerCase()
+                    ? "text-gold-primary font-black scale-105"
                     : "text-gray-500 hover:text-white"
                   }`}
                 >
@@ -139,18 +142,27 @@ export default function Products() {
               ))}
             </div>
 
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-4 text-[12px] md:text-[10px] uppercase tracking-[0.2em] text-gray-500 relative group cursor-pointer h-full ml-4">
+            {/* FIXED SORT DROPDOWN FOR MOBILE */}
+            <div 
+              className="flex items-center gap-4 text-[12px] md:text-[10px] uppercase tracking-[0.2em] text-gray-500 relative cursor-pointer h-full ml-4"
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              onMouseEnter={() => setIsSortOpen(true)}
+              onMouseLeave={() => setIsSortOpen(false)}
+            >
               <span className="flex items-center gap-2 whitespace-nowrap">
-                Sort <PiCaretDown className="group-hover:rotate-180 transition-transform duration-300" />
+                Sort <PiCaretDown className={`transition-transform duration-300 ${isSortOpen ? 'rotate-180' : ''}`} />
               </span>
-              
-              <div className="absolute top-full right-0 mt-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+
+              <div className={`absolute top-full right-0 mt-0 pt-2 transition-all duration-300 ${isSortOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                 <div className="w-52 bg-[#0a0a0a] border border-white/10 shadow-2xl p-2 flex flex-col">
                   {FILTERS.sort.map((s) => (
-                    <button 
-                      key={s.value} 
-                      onClick={() => setActiveSort(s.value)} 
+                    <button
+                      key={s.value}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveSort(s.value);
+                        setIsSortOpen(false);
+                      }}
                       className={`text-left px-4 py-4 text-[11px] md:text-[10px] uppercase tracking-widest hover:bg-white/5 transition-colors ${activeSort === s.value ? "text-gold-primary" : "text-white"}`}
                     >
                       {s.label}
@@ -159,7 +171,6 @@ export default function Products() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -189,7 +200,7 @@ export default function Products() {
           )}
         </div>
       </div>
-      
+
       <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
     </div>
   );
@@ -199,10 +210,10 @@ function ProductCard({ product }) {
   return (
     <Link to={`/product/${product.id}`} className="block group">
       <motion.div layout className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-8">
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out" 
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out"
         />
       </motion.div>
       <div className="text-center px-4">
