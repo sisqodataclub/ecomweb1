@@ -4,44 +4,45 @@ import {
   PiTrash,
   PiMinus,
   PiPlus,
-  PiShoppingBag
+  PiShoppingBag,
+  PiEnvelopeSimple
 } from "react-icons/pi";
-import { Link } from "react-router"; // Assuming React Router v7
+import { Link } from "react-router"; 
 import Navbar from "~/components/home/Navbar";
 import { useCart } from "~/contexts/CartContext";
-
 import { createCheckoutSession } from "~/lib/api";
 
 export default function Cart() {
   const { cartItems, updateQuantity, removeItem } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState(""); // Track actual user email
 
   // Permanent obsidian theme
   useEffect(() => {
     document.documentElement.setAttribute("data-theme-color", "obsidian");
-    return () => {
-      // Cleanup logic if needed
-    };
   }, []);
 
-// --- LOGIC ---
+  // --- LOGIC ---
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shipping = subtotal > 250 ? 0 : 25; // Complimentary over £250
+  const shipping = subtotal > 1 ? 0 : 25; 
   const total = subtotal + shipping;
 
   const handleCheckout = async () => {
+    if (!email || !email.includes("@")) {
+      setError("Please enter a valid email address for your order confirmation.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
-      // 1. Call your new backend endpoint
-      // Removed isGift argument
+      // ✅ Now passing the dynamic email state instead of a placeholder
       const { checkout_url } = await createCheckoutSession(
         cartItems,
-        "user@example.com" // TODO: Get from AuthContext or user input
+        email 
       );
 
-      // 2. Redirect to Stripe
       if (checkout_url) {
         window.location.href = checkout_url;
       } else {
@@ -60,7 +61,6 @@ export default function Cart() {
       <Navbar />
 
       <div className="pt-[160px] pb-20 container mx-auto px-6 max-w-6xl">
-
         {/* HEADER */}
         <header className="mb-12 md:mb-20 text-center">
           <motion.h1
@@ -75,10 +75,8 @@ export default function Cart() {
 
         <AnimatePresence mode="wait">
           {cartItems.length === 0 ? (
-            // --- EMPTY STATE ---
             <EmptyCart key="empty" />
           ) : (
-            // --- POPULATED CART ---
             <motion.div
               key="cart"
               initial={{ opacity: 0 }}
@@ -86,7 +84,6 @@ export default function Cart() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24"
             >
-
               {/* LEFT COLUMN: ITEMS */}
               <div className="lg:col-span-2 space-y-8">
                 <div className="border-t border-gold-primary/10">
@@ -101,15 +98,31 @@ export default function Cart() {
                     ))}
                   </AnimatePresence>
                 </div>
-                {/* Gift Option Removed Here */}
               </div>
 
               {/* RIGHT COLUMN: SUMMARY */}
               <div className="lg:col-span-1">
-                <div className="sticky top-[140px] bg-home-bg/50 backdrop-blur-sm border border-gold-primary/10 p-8 shadow-2xl shadow-gold-primary/5">
+                <div className="sticky top-[140px] bg-home-bg/50 backdrop-blur-md border border-gold-primary/10 p-8 shadow-2xl shadow-gold-primary/5">
                   <h3 className="text-xl font-serif mb-8 flex items-center gap-2">
                     Summary
                   </h3>
+
+                  {/* CUSTOM EMAIL INPUT - OBSIDIAN STYLE */}
+                  <div className="mb-8 space-y-3">
+                    <label className="text-[10px] uppercase tracking-[0.2em] text-home-subtext font-bold flex items-center gap-2">
+                      <PiEnvelopeSimple className="text-sm" /> Contact Email
+                    </label>
+                    <div className="relative group">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="email@example.com"
+                        className="w-full bg-white/5 border border-gold-primary/20 p-4 text-sm text-home-text focus:outline-none focus:border-gold-primary transition-all duration-300 placeholder:text-home-subtext/30"
+                      />
+                      <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-gold-primary group-focus-within:w-full transition-all duration-500" />
+                    </div>
+                  </div>
 
                   <div className="space-y-4 text-xs uppercase tracking-widest text-home-subtext mb-8 border-b border-gold-primary/10 pb-8">
                     <div className="flex justify-between">
@@ -144,9 +157,9 @@ export default function Cart() {
                   <button
                     onClick={handleCheckout}
                     disabled={loading}
-                    className="w-full py-5 bg-gold-primary text-home-bg text-xs uppercase tracking-[0.25em] font-bold hover:brightness-110 transition-all mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-5 bg-gold-primary text-home-bg text-xs uppercase tracking-[0.25em] font-bold hover:brightness-110 active:scale-[0.98] transition-all mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? "Processing..." : "Proceed to Checkout"}
+                    {loading ? "Establishing Secure Link..." : "Proceed to Checkout"}
                   </button>
 
                   <div className="text-center">
@@ -156,7 +169,6 @@ export default function Cart() {
                   </div>
                 </div>
               </div>
-
             </motion.div>
           )}
         </AnimatePresence>

@@ -142,7 +142,6 @@
 /* --- OPTIMIZED LUXURY DARK THEME UTILITIES (ONYX & OBSIDIAN) --- */
 
 /* 1. Neutralize Warm Yellows/Ambers/Oranges (Performance Friendly) */
-/* Targeted removal instead of global * selector */
 [data-theme-color='onyx'] .bg-yellow-500,
 [data-theme-color='onyx'] .bg-yellow-400,
 [data-theme-color='onyx'] .bg-yellow-300,
@@ -207,7 +206,6 @@
 
 [data-theme-color='onyx'] .dark-button:hover,
 [data-theme-color='obsidian'] .dark-button:hover {
-  /* Hover fades to white/silver/gold mix, strictly eliminating orange/yellow */
   background: linear-gradient(135deg, #D4AF37 0%, #F5F5F5 100%);
   color: #000000;
   border-color: #D4AF37;
@@ -226,8 +224,26 @@
   box-shadow: 0 0 50px rgba(212, 175, 55, 0.15); /* Subtle Metallic Glow */
 }
 
-/* --- METALLIC SHIMMER (Cold Gold/White) --- */
-/* Replaces the warm yellow shimmer */
+/* --- METALLIC SHIMMER EFFECT (Restored) --- */
+
+/* 1. Global Shimmer (Works for all themes) */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-gold-primary) 0%,
+    #fff7d6 25%,
+    var(--color-gold-primary) 50%,
+    #fff7d6 75%,
+    var(--color-gold-primary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+/* 2. Luxury Cold Shimmer (Specific override for Onyx/Obsidian) */
 [data-theme-color='onyx'] .text-shimmer,
 [data-theme-color='obsidian'] .text-shimmer {
   background: linear-gradient(
@@ -240,6 +256,7 @@
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmer 6s linear infinite;
 }
