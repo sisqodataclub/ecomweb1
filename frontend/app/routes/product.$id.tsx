@@ -3,7 +3,7 @@
 import { useParams, Link } from "react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PiMinus, PiPlus, PiCaretDown, PiArrowLeft, PiCheck, PiSparkle, PiShieldCheck, PiAirplaneTilt } from "react-icons/pi";
+import { PiMinus, PiPlus, PiCaretDown, PiArrowLeft, PiCheck, PiSparkle } from "react-icons/pi";
 
 // FIXED RELATIVE IMPORTS
 import SEO from "../components/ui/SEO";
@@ -72,9 +72,9 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-gold-primary selection:text-black antialiased overflow-x-hidden">
-      
-      <SEO 
-        title={`${product?.name} • Équiva Iconic`} 
+
+      <SEO
+        title={`${product?.name} • Équiva Iconic`}
         description={product?.description}
         image={product?.image}
         schema={{
@@ -103,8 +103,9 @@ export default function ProductDetail() {
           <PiArrowLeft /> Back to Collection
         </Link>
 
+        {/* 5-Column Image / 7-Column Text Split */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-          <div className="lg:col-span-7 relative">
+          <div className="lg:col-span-5 relative">
             <div className="sticky top-32">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -128,7 +129,7 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-7">
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -191,16 +192,7 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-8 py-8 border-y border-white/5 mb-10 text-[9px] uppercase tracking-[0.2em] text-gray-500">
-                  <div className="flex items-center gap-3">
-                    <PiAirplaneTilt className="text-xl text-gold-primary/60" />
-                    <span>Royal Shipping <br/> £50+ Complimentary</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <PiShieldCheck className="text-xl text-gold-primary/60" />
-                    <span>Authenticity <br/> Guaranteed</span>
-                  </div>
-              </div>
+              {/* RE-MOVED: Royal Shipping & Authenticity Section was here */}
 
               <div className="space-y-2">
                 <AccordionItem

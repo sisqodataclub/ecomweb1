@@ -1,64 +1,72 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 @theme {
   /* 1. IVORY (Default) */
   --color-home-bg: #fdfcf7;
-  --color-home-text: #2d2410;      
+  --color-home-text: #2d2410;
   --color-home-subtext: #7c725a;
   --color-home-glow: #f4edd8;
   --color-gold-primary: #947a25;
-  
+
   /* 2. CHAMPAGNE */
   --color-champagne-bg: #f9f5eb;
   --color-champagne-text: #4a3b1d;
   --color-champagne-subtext: #8b7d5e;
   --color-champagne-glow: #fff9e6;
   --color-champagne-primary: #a68b32;
-  
+
   /* 3. PEARL */
   --color-pearl-bg: #f4f4f4;
   --color-pearl-text: #1a1a1a;
   --color-pearl-subtext: #666666;
   --color-pearl-glow: #ffffff;
   --color-pearl-primary: #7a6a4d;
-  
+
   /* 4. SAFFRON */
   --color-saffron-bg: #fffcf2;
   --color-saffron-text: #3d2b08;
   --color-saffron-subtext: #7d6b46;
   --color-saffron-glow: #ffedba;
   --color-saffron-primary: #bf8f00;
-  
+
   /* 5. LINEN */
   --color-linen-bg: #ede9e1;
   --color-linen-text: #2c2a26;
   --color-linen-subtext: #6b665e;
   --color-linen-glow: #f7f4ef;
   --color-linen-primary: #8c764d;
-  
+
   /* 6. ROYAL */
   --color-royal-bg: #ffffff;
   --color-royal-text: #450a0a;
   --color-royal-subtext: #991b1b;
   --color-royal-glow: #fee2e2;
   --color-royal-primary: #d4af37;
-  
+
   /* 7. PURE GOLD */
   --color-pure-gold-bg: #e2d484b0;
   --color-pure-gold-text: #261f0d;
   --color-pure-gold-subtext: #5c4d26;
   --color-pure-gold-glow: #fffbe6;
   --color-pure-gold-primary: #ffffff;
-  
-  /* 8. ONYX - Dark with Gold/White */
-  --color-onyx-bg: #0a0a0a;
-  --color-onyx-text: #ffffff;
-  --color-onyx-subtext: #d4af37;
-  --color-onyx-glow: #1a1508;
-  --color-onyx-primary: #ffd700;
+
+  /* 8. ONYX - REFINED LUXURY (Black/White/Metallic Gold) */
+  --color-onyx-bg: #000000;          /* True Black */
+  --color-onyx-text: #FFFFFF;        /* Stark White */
+  --color-onyx-subtext: #999999;     /* Cool Gray */
+  --color-onyx-glow: #1a1a1a;        /* Dark Glow */
+  --color-onyx-primary: #D4AF37;     /* Metallic Antique Gold (No Yellow) */
+
+  /* 9. OBSIDIAN - High-Fashion Midnight */
+  --color-obsidian-bg: #050505;      /* Deepest Black */
+  --color-obsidian-text: #f4f4f4;    /* Off-white */
+  --color-obsidian-subtext: #999999; /* Cool Gray */
+  --color-obsidian-glow: #0a0a0a;
+  --color-obsidian-primary: #D4AF37; /* Metallic Antique Gold */
 }
 
-/* Apply theme variables based on data attribute */
+/* --- THEME MAPPINGS --- */
+
 [data-theme-color='default'] {
   --color-home-bg: var(--color-home-bg);
   --color-home-text: var(--color-home-text);
@@ -123,27 +131,18 @@
   --color-gold-primary: var(--color-onyx-primary);
 }
 
-/* DARK THEME UTILITIES for ONYX ONLY */
-[data-theme-color='onyx'] {
-  --border-subtle: rgba(255, 215, 0, 0.2); /* Gold subtle borders */
-  --card-bg: rgba(20, 20, 20, 0.9); /* Dark card backgrounds */
-  --card-border: rgba(255, 215, 0, 0.3); /* Gold card borders */
+[data-theme-color='obsidian'] {
+  --color-home-bg: var(--color-obsidian-bg);
+  --color-home-text: var(--color-obsidian-text);
+  --color-home-subtext: var(--color-obsidian-subtext);
+  --color-home-glow: var(--color-obsidian-glow);
+  --color-gold-primary: var(--color-obsidian-primary);
 }
 
-/* Add these important dark theme utilities */
-[data-theme-color='onyx'] .dark-theme-text {
-  color: var(--color-home-text) !important;
-}
+/* --- OPTIMIZED LUXURY DARK THEME UTILITIES (ONYX & OBSIDIAN) --- */
 
-[data-theme-color='onyx'] .dark-theme-bg {
-  background-color: var(--color-home-bg) !important;
-}
-
-[data-theme-color='onyx'] .dark-theme-border {
-  border-color: var(--color-gold-primary) !important;
-}
-
-/* Remove all background colors that might conflict */
+/* 1. Neutralize Warm Yellows/Ambers/Oranges (Performance Friendly) */
+/* Targeted removal instead of global * selector */
 [data-theme-color='onyx'] .bg-yellow-500,
 [data-theme-color='onyx'] .bg-yellow-400,
 [data-theme-color='onyx'] .bg-yellow-300,
@@ -151,119 +150,107 @@
 [data-theme-color='onyx'] .bg-yellow-100,
 [data-theme-color='onyx'] .bg-amber-500,
 [data-theme-color='onyx'] .bg-amber-400,
-[data-theme-color='onyx'] .bg-amber-300 {
+[data-theme-color='onyx'] .bg-amber-300,
+[data-theme-color='onyx'] .bg-orange-500,
+[data-theme-color='obsidian'] .bg-yellow-500,
+[data-theme-color='obsidian'] .bg-yellow-400,
+[data-theme-color='obsidian'] .bg-amber-500 {
   background-color: transparent !important;
 }
 
-/* Additional dark theme utilities */
-[data-theme-color='onyx'] .dark-card {
-  background: var(--card-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--card-border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+/* 2. Enforce True Black Backgrounds on Main Containers */
+[data-theme-color='onyx'] body,
+[data-theme-color='onyx'] main,
+[data-theme-color='onyx'] section,
+[data-theme-color='onyx'] .bg-home-bg,
+[data-theme-color='obsidian'] body,
+[data-theme-color='obsidian'] main,
+[data-theme-color='obsidian'] section,
+[data-theme-color='obsidian'] .bg-home-bg {
+  background-color: #000000 !important;
 }
 
-[data-theme-color='onyx'] .dark-button {
-  background: linear-gradient(135deg, rgba(26, 21, 8, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
-  border: 1.5px solid var(--color-gold-primary);
-  color: var(--color-gold-primary);
+/* 3. Enforce White Text & Metallic Borders */
+[data-theme-color='onyx'] .text-home-text,
+[data-theme-color='obsidian'] .text-home-text {
+  color: #FFFFFF !important;
+}
+
+[data-theme-color='onyx'] .text-home-subtext,
+[data-theme-color='obsidian'] .text-home-subtext {
+  color: #999999 !important;
+}
+
+[data-theme-color='onyx'] .border-gold-primary,
+[data-theme-color='obsidian'] .border-gold-primary {
+  border-color: #D4AF37 !important;
+}
+
+/* 4. Luxury Dark Card Styles */
+[data-theme-color='onyx'] .dark-card,
+[data-theme-color='obsidian'] .dark-card {
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.3); /* Metallic Gold Border */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* 5. Luxury Dark Buttons (Black/Gold, No Yellow) */
+[data-theme-color='onyx'] .dark-button,
+[data-theme-color='obsidian'] .dark-button {
+  background: linear-gradient(135deg, #0a0a0a 0%, #000000 100%);
+  border: 1px solid #D4AF37;
+  color: #D4AF37;
   transition: all 0.3s ease;
   font-weight: 600;
 }
 
-[data-theme-color='onyx'] .dark-button:hover {
-  background: linear-gradient(135deg, var(--color-gold-primary) 0%, #ffed86 100%);
-  color: var(--color-home-bg);
-  border-color: var(--color-gold-primary);
+[data-theme-color='onyx'] .dark-button:hover,
+[data-theme-color='obsidian'] .dark-button:hover {
+  /* Hover fades to white/silver/gold mix, strictly eliminating orange/yellow */
+  background: linear-gradient(135deg, #D4AF37 0%, #F5F5F5 100%);
+  color: #000000;
+  border-color: #D4AF37;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
 }
 
-[data-theme-color='onyx'] .dark-overlay {
-  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.85));
+/* 6. Dark Overlays & Glows */
+[data-theme-color='onyx'] .dark-overlay,
+[data-theme-color='obsidian'] .dark-overlay {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
 }
 
-[data-theme-color='onyx'] .gold-glow {
-  box-shadow: 0 0 50px rgba(255, 215, 0, 0.25);
+[data-theme-color='onyx'] .gold-glow,
+[data-theme-color='obsidian'] .gold-glow {
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.15); /* Subtle Metallic Glow */
 }
 
-[data-theme-color='onyx'] .subtle-glow {
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+/* --- METALLIC SHIMMER (Cold Gold/White) --- */
+/* Replaces the warm yellow shimmer */
+[data-theme-color='onyx'] .text-shimmer,
+[data-theme-color='obsidian'] .text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #D4AF37 0%,   /* Metallic Gold */
+    #FFFFFF 25%,  /* Pure White Reflection */
+    #D4AF37 50%,  /* Metallic Gold */
+    #E5D4A3 75%,  /* Pale Champagne */
+    #D4AF37 100%  /* Metallic Gold */
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
 }
 
-/* BORDERS & BLENDING */
-[data-theme-color] {
-  --border-subtle: rgba(0, 0, 0, 0.05);
-}
-
-[data-theme-color='saffron'], 
-[data-theme-color='default'],
-[data-theme-color='pure-gold'] {
-  --border-subtle: rgba(148, 122, 37, 0.1);
-}
-
-/* Special for Onyx theme borders */
-[data-theme-color='onyx'] {
-  --border-subtle: rgba(255, 215, 0, 0.15);
-}
-
-/* METALLIC SHIMMER ANIMATION */
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
-.text-shimmer {
-  background: linear-gradient(
-    90deg, 
-    var(--color-gold-primary) 0%, 
-    #fff7d6 25%, 
-    var(--color-gold-primary) 50%, 
-    #fff7d6 75%, 
-    var(--color-gold-primary) 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 6s linear infinite;
-}
+/* --- UTILITIES --- */
 
-/* Enhanced shimmer for dark theme - simplified to avoid yellow boxes */
-[data-theme-color='onyx'] .text-shimmer {
-  background: linear-gradient(
-    90deg, 
-    #ffd700 0%, 
-    #ffffff 25%, 
-    #ffd700 50%, 
-    #ffffff 75%, 
-    #ffd700 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 6s linear infinite;
-}
-
-/* Simplified dark theme specific animations */
-@keyframes gold-pulse {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; }
-}
-
-[data-theme-color='onyx'] .gold-pulse {
-  animation: gold-pulse 3s ease-in-out infinite;
-}
-
-@keyframes float-glow {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
-  50% { transform: translateY(-10px) scale(1.05); opacity: 0.6; }
-}
-
-[data-theme-color='onyx'] .float-glow {
-  animation: float-glow 4s ease-in-out infinite;
-}
-
-/* UTILITIES */
 @utility vertical-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;
@@ -274,10 +261,9 @@
   mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
-/* Dark theme border variation */
 @utility dark-moroccan-border {
-  border: 1px solid var(--color-gold-primary);
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+  border: 1px solid #D4AF37;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
   mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
@@ -290,104 +276,61 @@
   animation: spin-slow 20s linear infinite;
 }
 
-.blend-morocco {
-  mix-blend-mode: multiply;
-  mask-image: linear-gradient(to right, black 20%, transparent 100%);
+/* BORDERS & BLENDING */
+[data-theme-color] {
+  --border-subtle: rgba(0, 0, 0, 0.05);
 }
 
-/* Dark theme blend mode */
-[data-theme-color='onyx'] .blend-morocco {
-  mix-blend-mode: screen;
-  mask-image: linear-gradient(to right, black 20%, transparent 100%);
+[data-theme-color='saffron'],
+[data-theme-color='default'],
+[data-theme-color='pure-gold'] {
+  --border-subtle: rgba(148, 122, 37, 0.1);
 }
 
-/* Additional utility for gold gradients */
+[data-theme-color='onyx'],
+[data-theme-color='obsidian'] {
+  --border-subtle: rgba(212, 175, 55, 0.2);
+}
+
+/* Metallic Gradient Utility */
 @utility gold-gradient {
-  background: linear-gradient(135deg, var(--color-gold-primary), #ffed86);
+  background: linear-gradient(135deg, #D4AF37, #E5D4A3);
 }
 
 @utility dark-gold-gradient {
-  background: linear-gradient(135deg, #1a1508, #0a0a0a, #1a1508);
+  background: linear-gradient(135deg, #1a1508, #000000, #1a1508);
 }
 
-/* Text stroke effect for dark theme */
-[data-theme-color='onyx'] .gold-stroke {
-  -webkit-text-stroke: 1px var(--color-gold-primary);
+/* Text stroke effect */
+[data-theme-color='onyx'] .gold-stroke,
+[data-theme-color='obsidian'] .gold-stroke {
+  -webkit-text-stroke: 1px #D4AF37;
   color: transparent;
 }
 
-/* Custom scrollbar for dark theme */
-[data-theme-color='onyx'] {
-  scrollbar-color: var(--color-gold-primary) #1a1a1a;
+/* --- SCROLLBAR (Metallic Gold) --- */
+[data-theme-color='onyx'],
+[data-theme-color='obsidian'] {
+  scrollbar-color: #D4AF37 #000000;
 }
 
-[data-theme-color='onyx'] ::-webkit-scrollbar {
+[data-theme-color='onyx'] ::-webkit-scrollbar,
+[data-theme-color='obsidian'] ::-webkit-scrollbar {
   width: 10px;
 }
 
-[data-theme-color='onyx'] ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+[data-theme-color='onyx'] ::-webkit-scrollbar-track,
+[data-theme-color='obsidian'] ::-webkit-scrollbar-track {
+  background: #000000;
 }
 
-[data-theme-color='onyx'] ::-webkit-scrollbar-thumb {
-  background: var(--color-gold-primary);
+[data-theme-color='onyx'] ::-webkit-scrollbar-thumb,
+[data-theme-color='obsidian'] ::-webkit-scrollbar-thumb {
+  background: #D4AF37;
   border-radius: 5px;
 }
 
-[data-theme-color='onyx'] ::-webkit-scrollbar-thumb:hover {
-  background: #ffed86;
+[data-theme-color='onyx'] ::-webkit-scrollbar-thumb:hover,
+[data-theme-color='obsidian'] ::-webkit-scrollbar-thumb:hover {
+  background: #E5D4A3;
 }
-
-/* Fix for any yellow box issues - add these overrides */
-[data-theme-color='onyx'] * {
-  background-color: transparent !important;
-}
-
-[data-theme-color='onyx'] body,
-[data-theme-color='onyx'] .bg-home-bg,
-[data-theme-color='onyx'] section {
-  background-color: var(--color-home-bg) !important;
-}
-
-[data-theme-color='onyx'] .text-home-text {
-  color: var(--color-home-text) !important;
-}
-
-[data-theme-color='onyx'] .text-home-subtext {
-  color: var(--color-home-subtext) !important;
-}
-
-[data-theme-color='onyx'] .border-gold-primary {
-  border-color: var(--color-gold-primary) !important;
-}
-
-@theme {
-    /* ... existing themes ... */
-  
-    /* 9. OBSIDIAN - High-Fashion Midnight & Antique Gold */
-    --color-obsidian-bg: #050505;        /* Deeper than Onyx */
-    --color-obsidian-text: #f4f4f4;      /* Off-white for luxury feel */
-    --color-obsidian-subtext: #b5a642;   /* Antique Gold (more muted) */
-    --color-obsidian-glow: #0a0a0a;
-    --color-obsidian-primary: #ffffff;   /* Primary actions are stark white */
-  }
-  
-  /* Mapping for Obsidian */
-  [data-theme-color='obsidian'] {
-    --color-home-bg: var(--color-obsidian-bg);
-    --color-home-text: var(--color-obsidian-text);
-    --color-home-subtext: var(--color-obsidian-subtext);
-    --color-home-glow: var(--color-obsidian-glow);
-    --color-gold-primary: var(--color-obsidian-subtext); /* Using the Antique Gold */
-  }
-  
-  /* Obsidian Specific Utilities */
-  [data-theme-color='obsidian'] .obsidian-glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(181, 166, 66, 0.2);
-  }
-  
-  [data-theme-color='obsidian'] .gold-accent {
-    color: #b5a642 !important;
-  }

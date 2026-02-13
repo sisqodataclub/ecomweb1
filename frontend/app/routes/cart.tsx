@@ -4,9 +4,7 @@ import {
   PiTrash,
   PiMinus,
   PiPlus,
-  PiArrowRight,
-  PiShoppingBag,
-  PiGift
+  PiShoppingBag
 } from "react-icons/pi";
 import { Link } from "react-router"; // Assuming React Router v7
 import Navbar from "~/components/home/Navbar";
@@ -16,24 +14,20 @@ import { createCheckoutSession } from "~/lib/api";
 
 export default function Cart() {
   const { cartItems, updateQuantity, removeItem } = useCart();
-  const [isGift, setIsGift] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  
   // Permanent obsidian theme
   useEffect(() => {
     document.documentElement.setAttribute("data-theme-color", "obsidian");
-    // Cleanup on unmount (optional, but good practice)
     return () => {
-      // Note: For permanent theme pages, you might not want to reset
-      // document.documentElement.removeAttribute("data-theme-color");
+      // Cleanup logic if needed
     };
   }, []);
 
 // --- LOGIC ---
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shipping = subtotal > 250 ? 0 : 25; // Complimentary over $250
+  const shipping = subtotal > 250 ? 0 : 25; // Complimentary over £250
   const total = subtotal + shipping;
 
   const handleCheckout = async () => {
@@ -41,10 +35,10 @@ export default function Cart() {
     setError(null);
     try {
       // 1. Call your new backend endpoint
+      // Removed isGift argument
       const { checkout_url } = await createCheckoutSession(
         cartItems,
-        "user@example.com", // TODO: Get from AuthContext or user input
-        isGift
+        "user@example.com" // TODO: Get from AuthContext or user input
       );
 
       // 2. Redirect to Stripe
@@ -107,27 +101,7 @@ export default function Cart() {
                     ))}
                   </AnimatePresence>
                 </div>
-
-                {/* Gift Option */}
-                <div className="mt-8 p-6 bg-home-text/5 border border-gold-primary/10 flex items-start gap-4">
-                  <div className={`p-2 rounded-full border ${isGift ? 'border-gold-primary text-gold-primary' : 'border-home-text/20 text-home-subtext'}`}>
-                    <PiGift className="text-xl" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center mb-1">
-                      <h3 className="font-serif text-lg">Gift Wrapping</h3>
-                      <button
-                        onClick={() => setIsGift(!isGift)}
-                        className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${isGift ? 'bg-gold-primary' : 'bg-home-text/20'}`}
-                      >
-                        <div className={`absolute top-1 w-3 h-3 bg-home-bg rounded-full transition-all duration-300 ${isGift ? 'left-6' : 'left-1'}`} />
-                      </button>
-                    </div>
-                    <p className="text-xs text-home-subtext leading-relaxed">
-                      Your order will be presented in our signature lacquered box with silk tissue and a handwritten note.
-                    </p>
-                  </div>
-                </div>
+                {/* Gift Option Removed Here */}
               </div>
 
               {/* RIGHT COLUMN: SUMMARY */}
@@ -140,27 +114,21 @@ export default function Cart() {
                   <div className="space-y-4 text-xs uppercase tracking-widest text-home-subtext mb-8 border-b border-gold-primary/10 pb-8">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span className="text-home-text">${subtotal.toFixed(2)}</span>
+                      <span className="text-home-text">£{subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
                       {shipping === 0 ? (
                         <span className="text-gold-primary font-bold">Complimentary</span>
                       ) : (
-                        <span className="text-home-text">${shipping.toFixed(2)}</span>
+                        <span className="text-home-text">£{shipping.toFixed(2)}</span>
                       )}
                     </div>
-                    {isGift && (
-                      <div className="flex justify-between text-gold-primary">
-                        <span>Gift Service</span>
-                        <span>Included</span>
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex justify-between items-end mb-8">
                     <span className="text-sm uppercase tracking-widest font-bold">Total</span>
-                    <span className="text-3xl font-serif text-gold-primary">${total.toFixed(2)}</span>
+                    <span className="text-3xl font-serif text-gold-primary">£{total.toFixed(2)}</span>
                   </div>
 
                   {error && (
@@ -229,17 +197,16 @@ function EmptyCart() {
 }
 
 // --- SUB-COMPONENT: CART ITEM ROW ---
-function CartItem({ item, onUpdate, onRemove }) {
+function CartItem({ item, onUpdate, onRemove }: any) {
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0, overflow: "hidden" }}
-      // CHANGED: Fixed to flex-row on all screens (removed flex-col)
       className="flex flex-row gap-4 md:gap-6 py-6 md:py-8 border-b border-gold-primary/10 group"
     >
-      {/* Image: Fixed width on mobile (w-24) to prevent big picture */}
+      {/* Image */}
       <div className="w-24 md:w-32 aspect-[3/4] md:aspect-[4/5] bg-home-text/5 overflow-hidden relative shrink-0">
         <img
           src={item.image}
@@ -253,13 +220,13 @@ function CartItem({ item, onUpdate, onRemove }) {
         <div>
           <div className="flex justify-between items-start mb-1 md:mb-2">
             <h3 className="text-base md:text-xl font-serif text-home-text">{item.name}</h3>
-            <span className="text-gold-primary font-bold text-sm md:text-lg">${(item.price * item.quantity).toFixed(2)}</span>
+            <span className="text-gold-primary font-bold text-sm md:text-lg">£{(item.price * item.quantity).toFixed(2)}</span>
           </div>
           <p className="text-[10px] md:text-xs uppercase tracking-widest text-home-subtext mb-4 md:mb-6">{item.variant}</p>
         </div>
 
         <div className="flex justify-between items-center md:items-end">
-          {/* Quantity Controls - Compact on mobile */}
+          {/* Quantity Controls */}
           <div className="flex items-center border border-home-text/10 hover:border-gold-primary/50 transition-colors w-24 md:w-32 h-8 md:h-10">
             <button
               onClick={() => onUpdate(item.id, -1)}

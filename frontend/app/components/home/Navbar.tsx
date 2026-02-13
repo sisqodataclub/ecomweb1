@@ -5,8 +5,6 @@ import {
   PiList,
   PiX,
   PiShoppingBag,
-  PiMagnifyingGlass,
-  PiArrowRight,
   PiInstagramLogo,
   PiEnvelopeSimple
 } from "react-icons/pi";
@@ -50,7 +48,6 @@ export default function Navbar() {
   const { cartCount } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // --- LOGIC ---
   useEffect(() => {
@@ -60,12 +57,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (isMobileMenuOpen || isSearchOpen) {
+    if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-  }, [isMobileMenuOpen, isSearchOpen]);
+  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -81,7 +78,7 @@ export default function Navbar() {
       >
         <div className="container mx-auto px-6 flex justify-between items-center text-home-text">
 
-          {/* --- LEFT: Links + Mobile Trigger + Search --- */}
+          {/* --- LEFT: Links + Mobile Trigger --- */}
           <div className="flex-1 flex items-center justify-start gap-6">
             <div className="hidden md:flex gap-8">
               <NavLink label="Collection" to="/products" />
@@ -94,14 +91,6 @@ export default function Navbar() {
               aria-label="Menu"
             >
               <PiList />
-            </button>
-
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="text-xl hover:text-gold-primary transition-colors p-1"
-              aria-label="Search"
-            >
-              <PiMagnifyingGlass />
             </button>
           </div>
 
@@ -158,8 +147,8 @@ export default function Navbar() {
               {/* Header */}
               <div className="flex justify-between items-center p-6 border-b border-gold-primary/10">
                 <span className="text-xl font-serif font-bold tracking-tighter text-gold-primary text-shimmer flex items-center gap-2">
-                   <img src="/logo3.png" alt="Équiva Logo" className="h-9 w-auto object-contain" />
-                   Équiva
+                  <img src="/logo3.png" alt="Équiva Logo" className="h-9 w-auto object-contain" />
+                  Équiva
                 </span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -198,52 +187,6 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* 3. SEARCH CURTAIN OVERLAY */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[100] bg-home-bg/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 font-sans text-home-text"
-          >
-            <button
-              onClick={() => setIsSearchOpen(false)}
-              className="absolute top-8 right-8 hover:text-gold-primary transition-colors text-xs uppercase tracking-widest flex items-center gap-2"
-            >
-              Close <PiX className="text-lg" />
-            </button>
-
-            <div className="w-full max-w-2xl text-center">
-              <motion.label
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="block text-gold-primary text-xs uppercase tracking-[0.3em] mb-6 font-bold"
-              >
-                Search The Collection
-              </motion.label>
-
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.3, duration: 0.8, ease: "circOut" }}
-                className="relative group border-b border-home-text/20 focus-within:border-gold-primary transition-colors duration-500"
-              >
-                <input
-                  type="text"
-                  placeholder="Type to search..."
-                  autoFocus
-                  className="w-full bg-transparent py-4 text-3xl md:text-5xl font-serif text-center placeholder:text-home-text/20 focus:outline-none"
-                />
-                <PiArrowRight className="absolute right-0 top-1/2 -translate-y-1/2 text-2xl text-gold-primary opacity-0 group-focus-within:opacity-100 -translate-x-4 group-focus-within:translate-x-0 transition-all duration-500" />
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* 4. FOOTER TICKER (Fixed Bottom) */}
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -252,10 +195,10 @@ export default function Navbar() {
         className="fixed bottom-0 w-full z-[40] bg-home-bg/90 backdrop-blur-md border-t border-gold-primary/20 text-home-text py-4 flex items-center justify-center gap-8 overflow-hidden font-sans shadow-[0_-5px_20px_rgba(0,0,0,0.05)]"
       >
         <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300">
-           <PiInstagramLogo className="text-gold-primary text-xl" />
+          <PiInstagramLogo className="text-gold-primary text-xl" />
         </a>
         <a href={`mailto:${EMAIL_ADDRESS}`} className="hover:scale-110 transition-transform duration-300">
-           <PiEnvelopeSimple className="text-gold-primary text-xl" />
+          <PiEnvelopeSimple className="text-gold-primary text-xl" />
         </a>
       </motion.div>
     </>
@@ -264,7 +207,7 @@ export default function Navbar() {
 
 // --- SUB-COMPONENTS ---
 
-function NavLink({ label, to }) {
+function NavLink({ label, to }: any) {
   return (
     <Link
       to={to || "#"}
@@ -276,7 +219,7 @@ function NavLink({ label, to }) {
   );
 }
 
-function MobileNavLink({ index, label, onClick, to }) {
+function MobileNavLink({ index, label, onClick, to }: any) {
   return (
     <motion.div variants={linkVars} className="group relative w-full">
       <Link

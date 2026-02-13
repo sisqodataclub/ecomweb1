@@ -6,7 +6,6 @@ import { PiDrop, PiInfinity, PiCaretDown, PiX, PiStarFour } from "react-icons/pi
 // --- LUXURY COPY ---
 const BRAND_MOTTO = "Presence. Without Permission.";
 
-// --- ADVERTISING BANNER MESSAGES (Top bar) ---
 const BANNER_MESSAGES = [
   "Complimentary Royal Shipping on Orders Over £100",
   "New Arrival: The 'Oud Wood' Interpretation"
@@ -20,12 +19,21 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
   // --- STATE ---
   const [showTopBanner, setShowTopBanner] = useState(true);
   const [bannerIndex, setBannerIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(true); // Default to true (mobile-first) to save resources
 
   const shouldReduceMotion = useReducedMotion();
 
   // --- MOUSE PARALLAX SETUP ---
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  // 1. PERFORMANCE: Detect Mobile to kill expensive listeners
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!showTopBanner) return;
@@ -36,8 +44,12 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
   }, [showTopBanner]);
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    // 2. PERFORMANCE: Do not add event listener on mobile
+    if (shouldReduceMotion || isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
+      // Throttle slightly by using requestAnimationFrame if needed, 
+      // but Framer Motion values are usually efficient enough unless on mobile.
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = (e.clientY / window.innerHeight) * 2 - 1;
       mouseX.set(x);
@@ -45,13 +57,14 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY, shouldReduceMotion]);
+  }, [mouseX, mouseY, shouldReduceMotion, isMobile]);
 
   const springConfig = { damping: 30, stiffness: 80 };
 
-  const moveX = useSpring(useTransform(mouseX, [-1, 1], shouldReduceMotion ? [0, 0] : [-15, 15]), springConfig);
-  const moveY = useSpring(useTransform(mouseY, [-1, 1], shouldReduceMotion ? [0, 0] : [-15, 15]), springConfig);
-  const moveBgX = useSpring(useTransform(mouseX, [-1, 1], shouldReduceMotion ? [0, 0] : [30, -30]), springConfig);
+  // 3. PERFORMANCE: Disable spring physics on mobile
+  const moveX = useSpring(useTransform(mouseX, [-1, 1], (shouldReduceMotion || isMobile) ? [0, 0] : [-15, 15]), springConfig);
+  const moveY = useSpring(useTransform(mouseY, [-1, 1], (shouldReduceMotion || isMobile) ? [0, 0] : [-15, 15]), springConfig);
+  const moveBgX = useSpring(useTransform(mouseX, [-1, 1], (shouldReduceMotion || isMobile) ? [0, 0] : [30, -30]), springConfig);
 
   const containerVars = {
     initial: { opacity: 0 },
@@ -59,8 +72,8 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
   };
 
   const itemVars = {
-    initial: { opacity: 0, y: shouldReduceMotion ? 0 : 40 },
-    animate: { opacity: 1, y: 0, transition: { duration: 1.8, ease: [0.16, 1, 0.3, 1] } }
+    initial: { opacity: 0, y: (shouldReduceMotion || isMobile) ? 20 : 40 }, // Reduce distance on mobile
+    animate: { opacity: 1, y: 0, transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } }
   };
 
   return (
@@ -109,11 +122,11 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
         )}
       </AnimatePresence>
 
-      {/* PARALLAX BACKGROUND TEXT */}
+      {/* PARALLAX BACKGROUND TEXT - Disable parallax on mobile */}
       <motion.div
-        style={{ x: moveBgX, willChange: "transform" }}
-        initial={{ opacity: 0, letterSpacing: shouldReduceMotion ? "3em" : "1em" }}
-        animate={{ opacity: 0.04, letterSpacing: "3.5em" }}
+        style={{ x: moveBgX, willChange: "transform" }} // willChange helps GPU
+        initial={{ opacity: 0, letterSpacing: (shouldReduceMotion || isMobile) ? "1em" : "3em" }}
+        animate={{ opacity: 0.04, letterSpacing: (shouldReduceMotion || isMobile) ? "1.5em" : "3.5em" }}
         transition={{ duration: 6, ease: "easeOut" }}
         className={`absolute inset-0 flex items-center justify-center pointer-events-none select-none ${
           isDarkTheme ? "text-white/5" : "text-black/5"
@@ -124,9 +137,9 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
         </span>
       </motion.div>
 
-      {/* GOLD PARTICLES - Optimized for Speed */}
+      {/* GOLD PARTICLES - Reduced Count for Mobile */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(isMobile ? 3 : 6)].map((_, i) => (
           <motion.div
             key={i}
             animate={shouldReduceMotion ? {} : {
@@ -138,7 +151,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
             className={`absolute bottom-0 w-[1.5px] h-[1.5px] rounded-full shadow-sm ${
               isDarkTheme ? "bg-gold-primary/60" : "bg-gold-primary"
             }`}
-            style={{ left: `${15 + i * 15}%`, title: "transform", willChange: "transform" }}
+            style={{ left: `${15 + i * 15}%`, willChange: "transform" }}
           />
         ))}
       </div>
@@ -149,7 +162,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
         {/* Decorative Line */}
         <motion.div
           initial={{ height: 0, opacity: 0 }}
-          animate={{ height: typeof window !== 'undefined' && window.innerWidth < 768 ? 60 : 120, opacity: 1 }}
+          animate={{ height: isMobile ? 60 : 120, opacity: 1 }}
           transition={{ duration: 3, delay: 0.2 }}
           className={`w-[1px] bg-gradient-to-b from-transparent via-gold-primary to-transparent mb-6 ${
             isDarkTheme ? "via-gold-primary/70" : ""
@@ -158,30 +171,32 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
 
         <div className="relative group text-center w-full flex flex-col items-center justify-center">
 
-          {/* GLOW EFFECT - Optimized Blur */}
+          {/* GLOW EFFECT - Reduced Blur on Mobile */}
           <motion.div
             style={{ x: moveX, y: moveY, translateZ: 0 }}
+            // 4. PERFORMANCE: Lower blur radius on mobile, remove group-hover on mobile
             className={`absolute inset-0 transition-opacity duration-1000 ${
-               shouldReduceMotion
-                ? "opacity-5 bg-gold-primary/10 rounded-full"
-                : "blur-[60px] md:blur-[100px] opacity-30 group-hover:opacity-50"
+               (shouldReduceMotion || isMobile)
+                ? "opacity-20 bg-gold-primary/5 blur-[40px] rounded-full" 
+                : "blur-[100px] opacity-30 group-hover:opacity-50"
             } ${isDarkTheme ? "bg-gold-primary/5" : "bg-gold-primary/10"}`}
           />
 
           {/* === LOGO AREA === */}
           <div className="relative w-full flex justify-center items-center">
-            <motion.div 
-              variants={itemVars} 
+            <motion.div
+              variants={itemVars}
               className="relative z-10"
               style={{ willChange: "transform, opacity" }}
             >
+              {/* 5. PERFORMANCE: Ensure image is not massive. Replaced drop-shadow-2xl with simpler shadow or none on mobile */}
               <img
                 src="/logo3.png"
                 alt="Équiva Iconic Logo"
                 fetchPriority="high"
                 loading="eager"
                 decoding="sync"
-                className="w-[70vw] md:w-[40vw] max-w-[500px] h-auto object-contain drop-shadow-2xl opacity-90"
+                className={`w-[70vw] md:w-[40vw] max-w-[500px] h-auto object-contain opacity-90 ${isMobile ? 'drop-shadow-lg' : 'drop-shadow-2xl'}`}
               />
             </motion.div>
           </div>
@@ -239,7 +254,7 @@ export default function MonolithLayout({ isDarkTheme }: MonolithLayoutProps) {
 
           {/* Scroll Arrow */}
           <motion.div
-            animate={shouldReduceMotion ? {} : { opacity: [0.3, 1, 0.3] }}
+            animate={(shouldReduceMotion || isMobile) ? {} : { opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className={`mt-2 ${isDarkTheme ? "text-gold-primary/30" : "text-gold-primary/50"}`}
           >
